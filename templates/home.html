@@ -22,7 +22,9 @@
   <body>
 
     <div class="container">
-
+      <div class="header clearfix">
+      <h5 class="text-muted">Page Generated at {{ time }} UTC</h5>
+      </div>
       <div class="jumbotron">
         <h1>/r/thebutton</h1>
         <p class="lead">Are you <span style="color: #820080">purple</span> or <span style="color: #888">grey</span>?</p>
@@ -31,25 +33,28 @@
 
       <div class="row marketing">
         <div class="col-lg-6">
-          <h4>Lowest Time Reached</h4>
-          <p>The timer went down to <strong><span id="lowest_number">{{ data["lowestTime"]["value"] }}</span></strong> at <strong><span id="lowest_time">{{ data["lowestTime"]["time"] }}</span></strong> UTC.</p>
+          <h4>Clicks Per Second (Overall)</h4>
+          <p>Since the button was clickable, there has been an average of <strong>{{ data["clicks_second"]["all"] }}</strong> clicks /sec.</p>
 
-          <h4>Clicks Per Second</h4>
-          <p>Since the button was clickable, there has been an average of <strong><span id="clicks_second">{{ data["clicks_second"] }}</span></strong> clicks /sec.</p>
+          <h4>Clicks Per Second (Past 1m)</h4>
+          <p>In the last minute, there has been an average of <strong>{{ data["clicks_second"]["1m"] }}</strong> clicks  /sec.</p>
 
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+          <h4>Clicks Per Second (Past 10m)</h4>
+          <p>In the last 10 minutes, there has been an average of <strong>{{ data["clicks_second"]["10m"] }}</strong> clicks /sec.</p>
+
+          <h4>Clicks Per Second (Past 60m)</h4>
+          <p>In the last 60 minutes, there has been an average of <strong>{{ data["clicks_second"]["60m"] }}</strong> clicks /sec.</p>
         </div>
 
         <div class="col-lg-6">
+          <h4>Lowest Time Reached</h4>
+          <p>The timer went down to <strong>{{ data["lowestTime"]["value"] }}</strong> at <strong>{{ data["lowestTime"]["time"] }}</strong> UTC.</p>
+
           <h4>Number of Clicks</h4>
-          <p>There have been <strong><span id="clicks">{{ data["clicks"] }}</span></strong> clicks.</p>
+          <p>There have been <strong>{{ data["clicks"] }}</strong> clicks.</p>
 
-          <h4>Subheading</h4>
-          <p>Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Cras mattis consectetur purus sit amet fermentum.</p>
-
-          <h4>Subheading</h4>
-          <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+          <h4>Suggestions</h4>
+          <p>Got an idea for another statistic to show? Message <strong>Chr12t0pher</strong> on reddit!</p>
         </div>
       </div>
 
@@ -60,15 +65,5 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="/static/js/ripples.min.js"></script>
     <script src="/static/js/material.min.js"></script>
-    <script type="text/javascript">
-        var source = new EventSource(window.location.href + "stream");
-        source.addEventListener("message", function (json) {
-            var data = JSON.parse(json.data);
-            $("#lowest_number").text(data.lowestTime.value);
-            $("#lowest_time").text(data.lowestTime.time);
-            $("#clicks_second").text(data.clicks_second);
-            $("#clicks").text(data.clicks);
-            });
-</script>
   </body>
 </html>
