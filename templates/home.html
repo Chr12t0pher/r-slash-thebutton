@@ -23,7 +23,8 @@
 
     <div class="container">
       <div class="header clearfix">
-      <h5 class="text-muted">Page Generated at {{ time[0] }} UTC. Service started on {{ time[1] }} UTC</h5>
+      <h5 class="text-muted">Page Generated at {{ time[0] }} UTC. Service started on {{ time[1] }} UTC.</h5>
+      <small class="text-muted">Data may be incomplete/inaccurate for up to one hour after service start.</small>
       </div>
       <div class="jumbotron">
         <h1>/r/thebutton</h1>
@@ -65,7 +66,7 @@
         <div class="col-lg-6">
 
           <h4>Lowest Time (Overall)</h4>
-          <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds at <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
+          <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds on <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
         </div>
         <div class="col-lg-6">
           <h4>Suggestions</h4>

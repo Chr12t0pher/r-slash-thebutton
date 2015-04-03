@@ -6,19 +6,19 @@ import datetime
 from json import loads, dumps
 from time import sleep
 
+lowestfile = "lowest.json"
+# lowestfile = "/var/www/FlaskApp/lowest.json"
+historicfile = "historic.json"
+# historicfile = "/var/www/FlaskApp/historic.json"
+
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
-try:
-    with open("lowest.json", "r") as f:
-        button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": loads(f.read())},
-                       "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
-                       "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
-        historic_data = {"click_count": []}
-except IOError:
-        button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": {"clicks": 60, "time": ""}},
-                       "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
-                       "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
-        historic_data = {"click_count": []}
+with open(lowestfile, "r") as f:
+    button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": loads(f.read())},
+                   "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
+                   "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
+with open(historicfile, "r") as f:
+    historic_data = loads(f.read())
 
 app = Flask(__name__)
 
@@ -31,12 +31,13 @@ def socket_controller():
             message_dict = literal_eval(str(message))["payload"]
             if message_dict["seconds_left"] < button_data["lowestTime"]["all"]["clicks"]:
                 button_data["lowestTime"]["all"]["clicks"] = int(message_dict["seconds_left"])
-                button_data["lowestTime"]["all"]["time"] = message_dict["now_str"][-8:].replace("-", ":")
-                with open("lowest.json", "w") as f:
+                button_data["lowestTime"]["all"]["time"] = datetime.datetime.utcnow().strftime("%d %b ") + \
+                                                           message_dict["now_str"][-8:].replace("-", ":")
+                with open(lowestfile, "w") as f:
                     f.write(dumps(button_data["lowestTime"]["all"]))
             button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
 
-    socket = Socket("wss://wss.redditmedia.com/thebutton?h=18f357d4d3b377018523f3981d36f2c63f976873&e=1428054735")
+    socket = Socket("wss://wss.redditmedia.com/thebutton?h=78a51e27e104970daca337e21ca88869b5de0f7a&e=1428166663")
     socket.connect()
     socket.run_forever()
 
@@ -46,13 +47,13 @@ def calculate_averages():
         button_data["clicks_second"]["all"] = round((button_data["clicks"]["all"] / (datetime.datetime.today() -
                                                      datetime.datetime(2015, 4, 1, 17, 00, 00)).total_seconds()), 3)
         if len(historic_data["click_count"]) >= 12:
-            button_data["clicks_second"]["1m"] = round(((historic_data["click_count"][-1] - historic_data["click_count"][-12]) / 60), 3)
+            button_data["clicks_second"]["1m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-12]) / float(60), 3)
             button_data["clicks"]["1m"] = historic_data["click_count"][-1] - historic_data["click_count"][-12]
         if len(historic_data["click_count"]) >= 120:
-            button_data["clicks_second"]["10m"] = round(((historic_data["click_count"][-1] - historic_data["click_count"][-120]) / 600), 3)
+            button_data["clicks_second"]["10m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-120]) / float(600), 3)
             button_data["clicks"]["10m"] = historic_data["click_count"][-1] - historic_data["click_count"][-120]
         if len(historic_data["click_count"]) == 720:
-            button_data["clicks_second"]["60m"] = round(((historic_data["click_count"][-1] - historic_data["click_count"][-720]) / 3600), 3)
+            button_data["clicks_second"]["60m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-720]) / float(3600), 3)
             button_data["clicks"]["60m"] = historic_data["click_count"][-1] - historic_data["click_count"][-720]
         sleep(5)
 
@@ -62,7 +63,9 @@ def historic_append():
     while True:
         historic_data["click_count"].append(button_data["clicks"]["all"])
         if len(historic_data["click_count"]) > 720:
-            historic_data.pop(0)
+            historic_data["click_count"].pop(0)
+        with open(historicfile, "w") as f:
+            f.write(dumps(historic_data))
         sleep(5)
 
 
