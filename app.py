@@ -46,14 +46,14 @@ def calculate_averages():
         button_data["clicks_second"]["all"] = round((button_data["clicks"]["all"] / (datetime.datetime.today() -
                                                      datetime.datetime(2015, 4, 1, 17, 00, 00)).total_seconds()), 3)
         if len(historic_data["click_count"]) >= 12:
-            button_data["clicks_second"]["1m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-12]) / 60, 3)
-            button_data["clicks"]["1m"] = round(historic_data["click_count"][-1] - historic_data["click_count"][-12], 3)
+            button_data["clicks_second"]["1m"] = round(((historic_data["click_count"][-1] - historic_data["click_count"][-12]) / 60), 3)
+            button_data["clicks"]["1m"] = historic_data["click_count"][-1] - historic_data["click_count"][-12]
         if len(historic_data["click_count"]) >= 120:
-            button_data["clicks_second"]["10m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-120]) / 600, 3)
-            button_data["clicks"]["10m"] = round(historic_data["click_count"][-1] - historic_data["click_count"][-120], 3)
+            button_data["clicks_second"]["10m"] = round(((historic_data["click_count"][-1] - historic_data["click_count"][-120]) / 600), 3)
+            button_data["clicks"]["10m"] = historic_data["click_count"][-1] - historic_data["click_count"][-120]
         if len(historic_data["click_count"]) == 720:
-            button_data["clicks_second"]["60m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-720]) / 3600, 3)
-            button_data["clicks"]["60m"] = round(historic_data["click_count"][-1] - historic_data["click_count"][-720], 3)
+            button_data["clicks_second"]["60m"] = round(((historic_data["click_count"][-1] - historic_data["click_count"][-720]) / 3600), 3)
+            button_data["clicks"]["60m"] = historic_data["click_count"][-1] - historic_data["click_count"][-720]
         sleep(5)
 
 
