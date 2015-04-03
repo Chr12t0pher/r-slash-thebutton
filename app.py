@@ -4,19 +4,23 @@ import threading
 from flask import Flask, render_template
 import datetime
 from json import loads, dumps
-import redis
 from time import sleep
+
+starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
 try:
     with open("lowest.json", "r") as f:
-        button_data = {"lowestTime": loads(f.read()), "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
-                       "clicks": 0}
+        button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": loads(f.read())},
+                       "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
+                       "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
+        historic_data = {"click_count": []}
 except IOError:
-        button_data = {"lowestTime": {"value": 60, "time": ""}, "clicks_second": {"1m": 0, "10m": 0, "60m": 0,
-                                                                                  "all": 0}, "clicks": 0}
+        button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": {"clicks": 60, "time": ""}},
+                       "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
+                       "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
+        historic_data = {"click_count": []}
 
 app = Flask(__name__)
-red = redis.StrictRedis()
 
 
 def socket_controller():
@@ -24,55 +28,50 @@ def socket_controller():
 
     class Socket(WebSocketClient):
         def received_message(self, message):
-            message_dict = literal_eval(str(message))["payload"]  # Convert string to dictionary and strip unneeded data.
-            if message_dict["seconds_left"] < button_data["lowestTime"]["value"]:
-                button_data["lowestTime"]["value"] = int(message_dict["seconds_left"])
-                button_data["lowestTime"]["time"] = message_dict["now_str"][-8:].replace("-", ":")
+            message_dict = literal_eval(str(message))["payload"]
+            if message_dict["seconds_left"] < button_data["lowestTime"]["all"]["clicks"]:
+                button_data["lowestTime"]["all"]["clicks"] = int(message_dict["seconds_left"])
+                button_data["lowestTime"]["all"]["time"] = message_dict["now_str"][-8:].replace("-", ":")
                 with open("lowest.json", "w") as f:
-                    f.write(dumps(button_data["lowestTime"]))
-            button_data["clicks"] = int(message_dict["participants_text"].replace(",", ""))
-            button_data["clicks_second"]["all"] = round((button_data["clicks"] / (datetime.datetime.today() -
-                                                         datetime.datetime(2015, 4, 1, 17, 00, 00)).total_seconds()), 3)
-        red.publish("main", dumps(button_data))
+                    f.write(dumps(button_data["lowestTime"]["all"]))
+            button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
+
     socket = Socket("wss://wss.redditmedia.com/thebutton?h=18f357d4d3b377018523f3981d36f2c63f976873&e=1428054735")
     socket.connect()
     socket.run_forever()
 
 
-def one_minute_average():
-    global button_data
+def calculate_averages():
     while True:
-        start = button_data["clicks"]
-        sleep(60)
-        end = button_data["clicks"]
-        button_data["clicks_second"]["1m"] = round((end - start) / 60, 3)
+        button_data["clicks_second"]["all"] = round((button_data["clicks"]["all"] / (datetime.datetime.today() -
+                                                     datetime.datetime(2015, 4, 1, 17, 00, 00)).total_seconds()), 3)
+        if len(historic_data["click_count"]) >= 12:
+            button_data["clicks_second"]["1m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-12]) / 60, 3)
+            button_data["clicks"]["1m"] = round(historic_data["click_count"][-1] - historic_data["click_count"][-12], 3)
+        if len(historic_data["click_count"]) >= 120:
+            button_data["clicks_second"]["10m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-120]) / 600, 3)
+            button_data["clicks"]["10m"] = round(historic_data["click_count"][-1] - historic_data["click_count"][-120], 3)
+        if len(historic_data["click_count"]) == 720:
+            button_data["clicks_second"]["60m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-720]) / 3600, 3)
+            button_data["clicks"]["60m"] = round(historic_data["click_count"][-1] - historic_data["click_count"][-720], 3)
+        sleep(5)
 
 
-def ten_minute_average():
-    global button_data
+def historic_append():
+    sleep(10)
     while True:
-        start = button_data["clicks"]
-        sleep(600)
-        end = button_data["clicks"]
-        button_data["clicks_second"]["10m"] = round((end - start) / 600, 3)
-
-
-def sixty_minute_average():
-    global button_data
-    while True:
-        start = button_data["clicks"]
-        sleep(3600)
-        end = button_data["clicks"]
-        button_data["clicks_second"]["60m"] = round((end - start) / 3600, 3)
+        historic_data["click_count"].append(button_data["clicks"]["all"])
+        if len(historic_data["click_count"]) > 720:
+            historic_data.pop(0)
+        sleep(5)
 
 
 @app.route("/")
 def home():
-    return render_template("home.html", data=button_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+    return render_template("home.html", data=button_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
 
 if __name__ == "__main__":
     threading.Thread(target=socket_controller).start()
-    threading.Thread(target=one_minute_average).start()
-    threading.Thread(target=ten_minute_average).start()
-    threading.Thread(target=sixty_minute_average).start()
+    threading.Thread(target=historic_append).start()
+    threading.Thread(target=calculate_averages).start()
     app.run(debug=True, use_reloader=False, threaded=True)

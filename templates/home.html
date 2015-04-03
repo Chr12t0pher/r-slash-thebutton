@@ -23,7 +23,7 @@
 
     <div class="container">
       <div class="header clearfix">
-      <h5 class="text-muted">Page Generated at {{ time }} UTC</h5>
+      <h5 class="text-muted">Page Generated at {{ time[0] }} UTC. Service started on {{ time[1] }} UTC</h5>
       </div>
       <div class="jumbotron">
         <h1>/r/thebutton</h1>
@@ -34,25 +34,40 @@
       <div class="row marketing">
         <div class="col-lg-6">
           <h4>Clicks Per Second (Overall)</h4>
-          <p>Since the button was clickable, there has been an average of <strong>{{ data["clicks_second"]["all"] }}</strong> clicks /sec.</p>
+          <p><strong>{{ data["clicks_second"]["all"] }}</strong> clicks /sec</p>
 
           <h4>Clicks Per Second (Past 1m)</h4>
-          <p>In the last minute, there has been an average of <strong>{{ data["clicks_second"]["1m"] }}</strong> clicks  /sec.</p>
+          <p><strong>{{ data["clicks_second"]["1m"] }}</strong> clicks  /sec</p>
 
           <h4>Clicks Per Second (Past 10m)</h4>
-          <p>In the last 10 minutes, there has been an average of <strong>{{ data["clicks_second"]["10m"] }}</strong> clicks /sec.</p>
+          <p><strong>{{ data["clicks_second"]["10m"] }}</strong> clicks /sec</p>
 
           <h4>Clicks Per Second (Past 60m)</h4>
-          <p>In the last 60 minutes, there has been an average of <strong>{{ data["clicks_second"]["60m"] }}</strong> clicks /sec.</p>
+          <p><strong>{{ data["clicks_second"]["60m"] }}</strong> clicks /sec</p>
         </div>
 
         <div class="col-lg-6">
-          <h4>Lowest Time Reached</h4>
-          <p>The timer went down to <strong>{{ data["lowestTime"]["value"] }}</strong> at <strong>{{ data["lowestTime"]["time"] }}</strong> UTC.</p>
+          <h4>Number of Clicks (Overall)</h4>
+          <p><strong>{{ data["clicks"]["all"] }}</strong> clicks</p>
 
-          <h4>Number of Clicks</h4>
-          <p>There have been <strong>{{ data["clicks"] }}</strong> clicks.</p>
+          <h4>Number of Clicks (Past 1m)</h4>
+          <p><strong>{{ data["clicks"]["1m"] }}</strong> clicks</p>
 
+          <h4>Number of Clicks (Past 10m)</h4>
+          <p><strong>{{ data["clicks"]["10m"] }}</strong> clicks</p>
+
+          <h4>Number of Clicks (Past 60m)</h4>
+          <p><strong>{{ data["clicks"]["60m"] }}</strong> clicks</p>
+        </div>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+
+          <h4>Lowest Time (Overall)</h4>
+          <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds at <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
+        </div>
+        <div class="col-lg-6">
           <h4>Suggestions</h4>
           <p>Got an idea for another statistic to show? Message <strong>Chr12t0pher</strong> on reddit!</p>
         </div>
