@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -35,7 +35,7 @@
       <div class="jumbotron">
         <h1>/r/thebutton</h1>
         <p class="lead">What colour are you?</p>
-        <p><a class="btn btn-lg btn-success" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
+        <p><a class="btn btn-lg" id="mainbutton" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
       </div>
 
       <div class="row">
@@ -110,6 +110,7 @@
 
 
     <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="/static/js/ripples.min.js"></script>
     <script src="/static/js/material.min.js"></script>
@@ -123,5 +124,11 @@
   ga('send', 'pageview');
 
 </script>
+  <script>
+      $(document).ready( function() {
+          var colours = ["purple", "blue", "green", "yellow", "orange", "red"];
+          $("#mainbutton").addClass("btn-material-" + colours[Math.floor(Math.random() * colours.length)]);
+      })
+  </script>
   </body>
 </html>
