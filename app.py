@@ -5,9 +5,12 @@ from flask import Flask, render_template
 import datetime
 from json import loads, dumps
 from time import sleep
+from sys import platform
 
-lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json"; historicfile = "historic.json"
-#lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json"; currentflairfile = "/var/www/FlaskApp/currentflair.json"; historicfile = "/var/www/FlaskApp/historic.json"
+if platform == "win32":  # If running locally.
+    lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json"; historicfile = "historic.json"
+else:  # If running in production.
+    lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json"; currentflairfile = "/var/www/FlaskApp/currentflair.json"; historicfile = "/var/www/FlaskApp/historic.json"
 
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
@@ -35,6 +38,8 @@ def socket_controller():
         def received_message(self, message):
             message_dict = literal_eval(str(message))["payload"]
             if message_dict["seconds_left"] < button_data["lowestTime"]["all"]["clicks"]:
+                historic_data["lowestTime"][str(int(message_dict["seconds_left"]))] =  \
+                    datetime.datetime.utcnow().strftime("%d %b ") + message_dict["now_str"][-8:].replace("-", ":")
                 button_data["lowestTime"]["all"]["clicks"] = int(message_dict["seconds_left"])
                 button_data["lowestTime"]["all"]["time"] = datetime.datetime.utcnow().strftime("%d %b ") + \
                                                            message_dict["now_str"][-8:].replace("-", ":")
@@ -87,6 +92,11 @@ def flair_data():
 @app.route("/")
 def home():
     return render_template("home.html", data=button_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+
+
+@app.route("/times")
+def times():
+    return render_template("times.html", data=historic_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
 
 
 @app.route("/donate")

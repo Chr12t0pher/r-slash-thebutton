@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>/r/thebutton</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this templates -->
+    <link href="/static/css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="/static/css/roboto.min.css" rel="stylesheet">
+    <link href="/static/css/material.min.css" rel="stylesheet">
+    <link href="/static/css/ripples.min.css" rel="stylesheet">
+
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header clearfix">
+          <nav>
+              <ul class="nav nav-pills pull-right">
+                  <li><a href="/">Home</a></li>
+                  <li class="active"><a href="javascript:void(0)">Times</a></li>
+              </ul>
+          </nav>
+      <h5 class="text-muted">Page Generated at {{ time[0] }} UTC. Service started on {{ time[1] }} UTC.</h5>
+      <small class="text-muted">Data may be incomplete/inaccurate for up to one hour after service start.</small>
+      </div>
+      <div class="jumbotron">
+        <h1>/r/thebutton</h1>
+        <p class="lead">What colour are you?</p>
+        <p><a class="btn btn-lg btn-success" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
+      </div>
+
+      <div class="row">
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+            <strong>Got any data</strong> to fill out pre-38 second times? Get in touch with me, /u/Chr12t0pher!
+        </div>
+        <div class="col-lg-4">
+          <h4><span style="color: #820080">Purple</span> Flair</h4>
+          <p>60 @ <strong>{{ data["lowestTime"]["60"] }}</strong> UTC</p>
+          <p>59 @ <strong>{{ data["lowestTime"]["59"] }}</strong> UTC</p>
+          <p>58 @ <strong>{{ data["lowestTime"]["58"] }}</strong> UTC</p>
+          <p>57 @ <strong>{{ data["lowestTime"]["57"] }}</strong> UTC</p>
+          <p>56 @ <strong>{{ data["lowestTime"]["56"] }}</strong> UTC</p>
+          <p>55 @ <strong>{{ data["lowestTime"]["55"] }}</strong> UTC</p>
+          <p>54 @ <strong>{{ data["lowestTime"]["54"] }}</strong> UTC</p>
+          <p>53 @ <strong>{{ data["lowestTime"]["53"] }}</strong> UTC</p>
+          <p>52 @ <strong>{{ data["lowestTime"]["52"] }}</strong> UTC</p>
+          <p>51 @ <strong>{{ data["lowestTime"]["51"] }}</strong> UTC</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #0083C7">Blue</span> Flair</h4>
+          <p>50 @ <strong>{{ data["lowestTime"]["50"] }}</strong> UTC</p>
+          <p>49 @ <strong>{{ data["lowestTime"]["49"] }}</strong> UTC</p>
+          <p>48 @ <strong>{{ data["lowestTime"]["48"] }}</strong> UTC</p>
+          <p>47 @ <strong>{{ data["lowestTime"]["47"] }}</strong> UTC</p>
+          <p>46 @ <strong>{{ data["lowestTime"]["46"] }}</strong> UTC</p>
+          <p>45 @ <strong>{{ data["lowestTime"]["45"] }}</strong> UTC</p>
+          <p>44 @ <strong>{{ data["lowestTime"]["44"] }}</strong> UTC</p>
+          <p>43 @ <strong>{{ data["lowestTime"]["43"] }}</strong> UTC</p>
+          <p>42 @ <strong>{{ data["lowestTime"]["42"] }}</strong> UTC</p>
+          <p>41 @ <strong>{{ data["lowestTime"]["41"] }}</strong> UTC</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #02BE01">Green</span> Flair</h4>
+          <p>40 @ <strong>{{ data["lowestTime"]["40"] }}</strong> UTC</p>
+          <p>39 @ <strong>{{ data["lowestTime"]["39"] }}</strong> UTC</p>
+          <p>38 @ <strong>{{ data["lowestTime"]["38"] }}</strong> UTC</p>
+          <p>37 @ <strong>{{ data["lowestTime"]["37"] }}</strong> UTC</p>
+          <p>36 @ <strong>{{ data["lowestTime"]["36"] }}</strong> UTC</p>
+          <p>35 @ <strong>{{ data["lowestTime"]["35"] }}</strong> UTC</p>
+          <p>34 @ <strong>{{ data["lowestTime"]["34"] }}</strong> UTC</p>
+          <p>33 @ <strong>{{ data["lowestTime"]["33"] }}</strong> UTC</p>
+          <p>32 @ <strong>{{ data["lowestTime"]["32"] }}</strong> UTC</p>
+          <p>31 @ <strong>{{ data["lowestTime"]["31"] }}</strong> UTC</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <h4><span style="color: #E5D900">Yellow</span> Flair</h4>
+          <p>30 @ <strong>{{ data["lowestTime"]["30"] }}</strong> UTC</p>
+          <p>29 @ <strong>{{ data["lowestTime"]["29"] }}</strong> UTC</p>
+          <p>28 @ <strong>{{ data["lowestTime"]["28"] }}</strong> UTC</p>
+          <p>27 @ <strong>{{ data["lowestTime"]["27"] }}</strong> UTC</p>
+          <p>26 @ <strong>{{ data["lowestTime"]["26"] }}</strong> UTC</p>
+          <p>25 @ <strong>{{ data["lowestTime"]["25"] }}</strong> UTC</p>
+          <p>24 @ <strong>{{ data["lowestTime"]["24"] }}</strong> UTC</p>
+          <p>23 @ <strong>{{ data["lowestTime"]["23"] }}</strong> UTC</p>
+          <p>22 @ <strong>{{ data["lowestTime"]["22"] }}</strong> UTC</p>
+          <p>21 @ <strong>{{ data["lowestTime"]["21"] }}</strong> UTC</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #E59500">Orange</span> Flair</h4>
+          <p>20 @ <strong>{{ data["lowestTime"]["20"] }}</strong> UTC</p>
+          <p>19 @ <strong>{{ data["lowestTime"]["19"] }}</strong> UTC</p>
+          <p>18 @ <strong>{{ data["lowestTime"]["18"] }}</strong> UTC</p>
+          <p>17 @ <strong>{{ data["lowestTime"]["17"] }}</strong> UTC</p>
+          <p>16 @ <strong>{{ data["lowestTime"]["16"] }}</strong> UTC</p>
+          <p>15 @ <strong>{{ data["lowestTime"]["15"] }}</strong> UTC</p>
+          <p>14 @ <strong>{{ data["lowestTime"]["14"] }}</strong> UTC</p>
+          <p>13 @ <strong>{{ data["lowestTime"]["13"] }}</strong> UTC</p>
+          <p>12 @ <strong>{{ data["lowestTime"]["12"] }}</strong> UTC</p>
+          <p>11 @ <strong>{{ data["lowestTime"]["11"] }}</strong> UTC</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #E50000">Red</span> Flair</h4>
+          <p>10 @ <strong>{{ data["lowestTime"]["10"] }}</strong> UTC</p>
+          <p>9 @ <strong>{{ data["lowestTime"]["09"] }}</strong> UTC</p>
+          <p>8 @ <strong>{{ data["lowestTime"]["08"] }}</strong> UTC</p>
+          <p>7 @ <strong>{{ data["lowestTime"]["07"] }}</strong> UTC</p>
+          <p>6 @ <strong>{{ data["lowestTime"]["06"] }}</strong> UTC</p>
+          <p>5 @ <strong>{{ data["lowestTime"]["05"] }}</strong> UTC</p>
+          <p>4 @ <strong>{{ data["lowestTime"]["04"] }}</strong> UTC</p>
+          <p>3 @ <strong>{{ data["lowestTime"]["03"] }}</strong> UTC</p>
+          <p>2 @ <strong>{{ data["lowestTime"]["02"] }}</strong> UTC</p>
+          <p>1 @ <strong>{{ data["lowestTime"]["01"] }}</strong> UTC</p>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <small>Overall counts and the lowest time are updated once per second, flair breakdown every five minutes, all else every five seconds.</small>
+        <p><a href="/donate" target="_blank">Donate</a> - <a href="https://github.com/Chr12t0pher/r-slash-thebutton" target="_blank">Github</a></p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="/static/js/ripples.min.js"></script>
+    <script src="/static/js/material.min.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-41885449-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>
