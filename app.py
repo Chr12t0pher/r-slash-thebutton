@@ -6,10 +6,8 @@ import datetime
 from json import loads, dumps
 from time import sleep
 
-lowestfile = "lowest.json"
-# lowestfile = "/var/www/FlaskApp/lowest.json"
-historicfile = "historic.json"
-# historicfile = "/var/www/FlaskApp/historic.json"
+lowestfile = "lowest.json"; flairfile = "flair.json"; historicfile = "historic.json"
+#lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json; historic = "/var/www/FlaskApp/historic.json"
 
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
@@ -17,6 +15,9 @@ with open(lowestfile, "r") as f:
     button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": loads(f.read())},
                    "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
                    "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
+with open(flairfile, "r") as f:
+    button_data["flairs"] = loads(f.read())
+
 with open(historicfile, "r") as f:
     historic_data = loads(f.read())
 
@@ -69,12 +70,26 @@ def historic_append():
         sleep(5)
 
 
+def flair_data():
+    sleep(10)
+    while True:
+        with open(flairfile, "r") as f:
+            button_data["flairs"] = loads(f.read())
+        sleep(150)
+
+
 @app.route("/")
 def home():
     return render_template("home.html", data=button_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+
+
+@app.route("/donate")
+def donate():
+    return render_template("donate.html", time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
 
 if __name__ == "__main__":
     threading.Thread(target=socket_controller).start()
     threading.Thread(target=historic_append).start()
     threading.Thread(target=calculate_averages).start()
+    threading.Thread(target=flair_data).start()
     app.run(debug=True, use_reloader=False, threaded=True)
