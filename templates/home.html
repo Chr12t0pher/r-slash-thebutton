@@ -32,7 +32,7 @@
         <p><a class="btn btn-lg btn-success" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
       </div>
 
-      <div class="row marketing">
+      <div class="row">
         <div class="col-lg-6">
           <h4>Clicks Per Second (Overall)</h4>
           <p><strong>{{ data["clicks_second"]["all"] }}</strong> clicks /sec</p>
@@ -62,35 +62,37 @@
         </div>
       </div>
 
-      <div class="row marketing">
+      <hr/>
+
+      <div class="row">
         <div class="col-lg-6">
-
-          <h4>Lowest Time (Overall)</h4>
-          <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds on <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
-
-          <h4>Flair Breakdown</h4>
-          <ul>
-            <li><span style="color: #888">Grey</span>: {{ data["flairs"]["grey"] }}</li>
-            <li><span style="color: #820080">Purple</span>: {{ data["flairs"]["purple"] }}</li>
-            <li><span style="color: #0083C7">Blue</span>: {{ data["flairs"]["blue"] }}</li>
-            <li><span style="color: #02BE01">Green</span>: {{ data["flairs"]["green"] }} </li>
-            <li><span style="color: #E5D900">Yellow</span>: {{ data["flairs"]["yellow"] }} </li>
-            <li><span style="color: #E59500">Orange</span>: {{ data["flairs"]["orange"] }}</li>
-            <li><span style="color: #E50000">Red</span>: {{ data["flairs"]["red"] }} </li>
-          </ul>
-          <small>Flair data provided by /u/mjgcfb.<br>
-          These figures are not entirely accurate.</small>
+            <h4>Flair Breakdown</h4>
+            <ul>
+              <li><span style="color: #888">Grey</span>: {{ data["flairs"]["grey"] }} ({{ data["current_flair"]["grey"] }}%)</li>
+              <li><span style="color: #820080">Purple</span>: {{ data["flairs"]["purple"] }} ({{ data["current_flair"]["purple"] }}%)</li>
+              <li><span style="color: #0083C7">Blue</span>: {{ data["flairs"]["blue"] }} ({{ data["current_flair"]["blue"] }}%)</li>
+              <li><span style="color: #02BE01">Green</span>: {{ data["flairs"]["green"] }} ({{ data["current_flair"]["green"] }}%)</li>
+              <li><span style="color: #E5D900">Yellow</span>: {{ data["flairs"]["yellow"] }} ({{ data["current_flair"]["yellow"] }}%)</li>
+              <li><span style="color: #E59500">Orange</span>: {{ data["flairs"]["orange"] }} ({{ data["current_flair"]["orange"] }}%)</li>
+              <li><span style="color: #E50000">Red</span>: {{ data["flairs"]["red"] }} ({{ data["current_flair"]["red"] }}%)</li>
+            </ul>
+            <small>Flair data provided by /u/mjgcfb.<br>
+            These figures are not entirely accurate.</small>
         </div>
+
         <div class="col-lg-6">
-          <h4>Suggestions</h4>
-          <p>Got an idea for another statistic to show? Message <strong>Chr12t0pher</strong> on reddit!</p>
+            <h4>Lowest Time (Overall)</h4>
+            <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds on <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
+
+            <h4>Suggestions</h4>
+          <p>Got an idea for another statistic to show? Message <strong>Chr12t0pher</strong> on reddit!</p><br>
         </div>
       </div>
 
       <footer class="footer">
-      <small>Overall counts and the lowest time are updated once per second, flair breakdown every five minutes, all else every five seconds.</small>
-      <p><a href="/donate" target="_blank">Donate</a> - <a href="https://github.com/Chr12t0pher/r-slash-thebutton" target="_blank">Github</a></p>
-</footer>
+        <small>Overall counts and the lowest time are updated once per second, flair breakdown every five minutes, all else every five seconds.</small>
+        <p><a href="/donate" target="_blank">Donate</a> - <a href="https://github.com/Chr12t0pher/r-slash-thebutton" target="_blank">Github</a></p>
+      </footer>
     </div> <!-- /container -->
 
 

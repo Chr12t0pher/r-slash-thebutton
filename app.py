@@ -6,8 +6,8 @@ import datetime
 from json import loads, dumps
 from time import sleep
 
-lowestfile = "lowest.json"; flairfile = "flair.json"; historicfile = "historic.json"
-#lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json; historic = "/var/www/FlaskApp/historic.json"
+lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json"; historicfile = "historic.json"
+#lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json"; currentflairfile = "/var/www/FlaskApp/currentflair.json"; historicfile = "/var/www/FlaskApp/historic.json"
 
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
@@ -15,8 +15,12 @@ with open(lowestfile, "r") as f:
     button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": loads(f.read())},
                    "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
                    "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
+
 with open(flairfile, "r") as f:
     button_data["flairs"] = loads(f.read())
+
+with open(currentflairfile, "r") as f:
+    button_data["current_flair"] = loads(f.read())
 
 with open(historicfile, "r") as f:
     historic_data = loads(f.read())
@@ -75,6 +79,8 @@ def flair_data():
     while True:
         with open(flairfile, "r") as f:
             button_data["flairs"] = loads(f.read())
+        with open(currentflairfile, "r") as f:
+            button_data["current_flair"] = loads(f.read())
         sleep(150)
 
 
