@@ -28,8 +28,8 @@
       </div>
       <div class="jumbotron">
         <h1>/r/thebutton</h1>
-        <p class="lead">Are you <span style="color: #820080">purple</span> or <span style="color: #888">grey</span>?</p>
-        <p><a class="btn btn-lg btn-success" href="http://www.reddit.com/r/thebutton" role="button">Visit the subreddit</a></p>
+        <p class="lead">What colour are you?</p>
+        <p><a class="btn btn-lg btn-success" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
       </div>
 
       <div class="row marketing">
@@ -67,6 +67,19 @@
 
           <h4>Lowest Time (Overall)</h4>
           <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds on <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
+
+          <h4>Flair Breakdown</h4>
+          <ul>
+            <li><span style="color: #888">Grey</span>: {{ data["flairs"]["grey"] }}</li>
+            <li><span style="color: #820080">Purple</span>: {{ data["flairs"]["purple"] }}</li>
+            <li><span style="color: #0083C7">Blue</span>: {{ data["flairs"]["blue"] }}</li>
+            <li><span style="color: #02BE01">Green</span>: {{ data["flairs"]["green"] }} </li>
+            <li><span style="color: #E5D900">Yellow</span>: {{ data["flairs"]["yellow"] }} </li>
+            <li><span style="color: #E59500">Orange</span>: {{ data["flairs"]["orange"] }}</li>
+            <li><span style="color: #E50000">Red</span>: {{ data["flairs"]["red"] }} </li>
+          </ul>
+          <small>Flair data provided by /u/mjgcfb. Updates every 5 min.<br>
+                 Not representative of all users, only users who have commented on the sub.</small>
         </div>
         <div class="col-lg-6">
           <h4>Suggestions</h4>
@@ -74,6 +87,9 @@
         </div>
       </div>
 
+      <footer class="footer">
+      <p><a href="/donate" target="_blank">Donate</a> - <a href="https://github.com/Chr12t0pher/r-slash-thebutton" target="_blank">Github</a></p>
+</footer>
     </div> <!-- /container -->
 
 
@@ -81,5 +97,15 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script src="/static/js/ripples.min.js"></script>
     <script src="/static/js/material.min.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-41885449-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
   </body>
 </html>
