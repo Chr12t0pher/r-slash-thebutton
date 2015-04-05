@@ -1,4 +1,5 @@
 from ws4py.client.threadedclient import WebSocketClient
+from ws4py.exc import HandshakeError
 from ast import literal_eval
 import threading
 from flask import Flask, render_template
@@ -6,6 +7,7 @@ import datetime
 from json import loads, dumps
 from time import sleep
 from sys import platform
+import requests
 
 if platform == "win32":  # If running locally.
     lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json"; historicfile = "historic.json"
@@ -47,9 +49,17 @@ def socket_controller():
                     f.write(dumps(button_data["lowestTime"]["all"]))
             button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
 
-    socket = Socket("wss://wss.redditmedia.com/thebutton?h=1656a7dabdeaad24202093b586154f081130a5d1&e=1428257913")
-    socket.connect()
-    socket.run_forever()
+    while True:
+        def new_socket_url():
+            return requests.get("http://reddit.com/r/thebutton",
+                                headers={"User-Agent": "/r/thebutton websocket url scraper (/u/Chr12t0pher)"}
+                                ).text.split('_websocket": "')[1].split('", ')[0]
+        try:
+            socket = Socket(new_socket_url())
+            socket.connect()
+            socket.run_forever()
+        except HandshakeError:
+            continue
 
 
 def calculate_averages():
