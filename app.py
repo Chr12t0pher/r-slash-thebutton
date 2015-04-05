@@ -8,6 +8,12 @@ from json import loads, dumps
 from time import sleep
 from sys import platform
 import requests
+import praw
+from secret import secret
+
+bot = praw.Reddit(user_agent="/r/thebutton Stats Poster (contact /u/Chr12t0pher)")
+bot.login("TheButtonStatsBot", secret)
+
 
 if platform == "win32":  # If running locally.
     lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json"; historicfile = "historic.json"
@@ -47,6 +53,7 @@ def socket_controller():
                                                            message_dict["now_str"][-8:].replace("-", ":")
                 with open(lowestfile, "w") as f:
                     f.write(dumps(button_data["lowestTime"]["all"]))
+                threading.Thread(target=reddit_bot, args=(button_data["lowestTime"]["all"]["clicks"],)).start()
             button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
 
     while True:
@@ -97,6 +104,15 @@ def flair_data():
         with open(currentflairfile, "r") as f:
             button_data["current_flair"] = loads(f.read())
         sleep(150)
+
+
+def reddit_bot(start_time):
+    sleep(60 - int(start_time) + 5)
+    if start_time == button_data["lowestTime"]["all"]["clicks"]:
+        bot.submit("thebutton",
+                   "Just now, at {} UTC, the button went down to {} seconds.".format(
+                       button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
+                   url="http://46.101.29.145/times", resubmit=True)
 
 
 @app.route("/")
