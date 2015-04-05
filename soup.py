@@ -17,7 +17,7 @@ while True:
 
     for entry in flair_soup:
         if entry.find_all("td")[1].text == "non presser":
-            flairs["grey"] += 1
+            pass  # Ignore dirty greys.
         elif entry.find_all("td")[1].text == "NoFlair":
             pass  # Ignore users without flair.
         else:
@@ -41,17 +41,10 @@ while True:
     with open(flairfile, "w") as f:
         f.write(dumps(flairs))
 
-    #
-    # Get subreddit data.
-    current_flair = {"grey": 0, "purple": 0, "blue": 0, "green": 0, "yellow": 0, "orange": 0, "red": 0}
-    subreddit_data = requests.get("http://www.reddit.com/r/thebutton",
-                                  headers={"user-agent": "python:theButtonStats:1 (by /u/Chr12t0pher)"}).text
-    subreddit_soup = BeautifulSoup(subreddit_data)
-    subreddit_users = int(subreddit_soup.find("p", {"class": "users-online"}).find("span", {"class": "number"}).text.replace(",", ""))
-    total_flair = sum(flairs.values())
+    current_flair = {"purple": 0, "blue": 0, "green": 0, "yellow": 0, "orange": 0, "red": 0}
 
     for flair in flairs:
-        current_flair[flair] = round(float((flairs[flair] / total_flair) * 100), 2)
+        current_flair[flair] = round(float((flairs[flair] / sum(flairs.values())) * 100), 2)
 
     with open(currentflairfile, "w") as f:
         f.write(dumps(current_flair))
