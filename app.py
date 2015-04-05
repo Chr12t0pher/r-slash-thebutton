@@ -47,7 +47,7 @@ def socket_controller():
                     f.write(dumps(button_data["lowestTime"]["all"]))
             button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
 
-    socket = Socket("wss://wss.redditmedia.com/thebutton?h=78a51e27e104970daca337e21ca88869b5de0f7a&e=1428166663")
+    socket = Socket("wss://wss.redditmedia.com/thebutton?h=1656a7dabdeaad24202093b586154f081130a5d1&e=1428257913")
     socket.connect()
     socket.run_forever()
 
