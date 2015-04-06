@@ -107,7 +107,7 @@ def flair_data():
 
 
 def reddit_bot(start_time):
-    sleep(60 - int(start_time) + 5)
+    sleep(10)
     if start_time == button_data["lowestTime"]["all"]["clicks"]:
         bot.submit("thebutton",
                    "Just now, at {} UTC, the button went down to {} seconds.".format(
