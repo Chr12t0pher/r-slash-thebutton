@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>/r/thebutton</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this templates -->
+    <link href="/static/css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="/static/css/roboto.min.css" rel="stylesheet">
+    <link href="/static/css/material.min.css" rel="stylesheet">
+    <link href="/static/css/ripples.min.css" rel="stylesheet">
+
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="header clearfix">
+          <nav>
+              <ul class="nav nav-pills pull-right">
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/times">Times</a></li>
+                  <li class="active"><a href="javascript:void(0)">Flairs</a></li>
+                  <li><a href="/donate">Donate</a></li>
+              </ul>
+          </nav>
+          <h5 class="text-muted">Generated at {{ time[0] }} UTC. Started on {{ time[1] }} UTC.</h5>
+          <small class="text-muted">Data may be incomplete/inaccurate for up to one hour after service start.</small>
+      </div>
+      <div class="jumbotron">
+        <h1>/r/thebutton</h1>
+        <p class="lead">What colour are you?</p>
+        <p><a class="btn btn-lg btn-success" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <h4><span style="color: #820080">Purple</span> Flair</h4>
+          <br>
+          <p><strong>{{ data["flairs_number"]["60"] }}</strong> have 60s.</p>
+          <p><strong>{{ data["flairs_number"]["59"] }}</strong> have 59s.</p>
+          <p><strong>{{ data["flairs_number"]["58"] }}</strong> have 58s.</p>
+          <p><strong>{{ data["flairs_number"]["57"] }}</strong> have 57s.</p>
+          <p><strong>{{ data["flairs_number"]["56"] }}</strong> have 56s.</p>
+          <p><strong>{{ data["flairs_number"]["55"] }}</strong> have 55s.</p>
+          <p><strong>{{ data["flairs_number"]["54"] }}</strong> have 54s.</p>
+          <p><strong>{{ data["flairs_number"]["53"] }}</strong> have 53s.</p>
+          <p><strong>{{ data["flairs_number"]["52"] }}</strong> have 52s.</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #0083C7">Blue</span> Flair</h4>
+          <p><strong>{{ data["flairs_number"]["51"] }}</strong> have 51s.</p>
+          <p><strong>{{ data["flairs_number"]["50"] }}</strong> have 50s.</p>
+          <p><strong>{{ data["flairs_number"]["49"] }}</strong> have 49s.</p>
+          <p><strong>{{ data["flairs_number"]["48"] }}</strong> have 48s.</p>
+          <p><strong>{{ data["flairs_number"]["47"] }}</strong> have 47s.</p>
+          <p><strong>{{ data["flairs_number"]["46"] }}</strong> have 46s.</p>
+          <p><strong>{{ data["flairs_number"]["45"] }}</strong> have 45s.</p>
+          <p><strong>{{ data["flairs_number"]["44"] }}</strong> have 44s.</p>
+          <p><strong>{{ data["flairs_number"]["43"] }}</strong> have 43s.</p>
+          <p><strong>{{ data["flairs_number"]["42"] }}</strong> have 42s.</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #02BE01">Green</span> Flair</h4>
+          <p><strong>{{ data["flairs_number"]["41"] }}</strong> have 41s.</p>
+          <p><strong>{{ data["flairs_number"]["40"] }}</strong> have 40s.</p>
+          <p><strong>{{ data["flairs_number"]["39"] }}</strong> have 39s.</p>
+          <p><strong>{{ data["flairs_number"]["38"] }}</strong> have 38s.</p>
+          <p><strong>{{ data["flairs_number"]["37"] }}</strong> have 37s.</p>
+          <p><strong>{{ data["flairs_number"]["36"] }}</strong> have 36s.</p>
+          <p><strong>{{ data["flairs_number"]["35"] }}</strong> have 35s.</p>
+          <p><strong>{{ data["flairs_number"]["34"] }}</strong> have 34s.</p>
+          <p><strong>{{ data["flairs_number"]["33"] }}</strong> have 33s.</p>
+          <p><strong>{{ data["flairs_number"]["32"] }}</strong> have 32s.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <h4><span style="color: #E5D900">Yellow</span> Flair</h4>
+          <p><strong>{{ data["flairs_number"]["31"] }}</strong> have 31s.</p>
+          <p><strong>{{ data["flairs_number"]["30"] }}</strong> have 30s.</p>
+          <p><strong>{{ data["flairs_number"]["29"] }}</strong> have 29s.</p>
+          <p><strong>{{ data["flairs_number"]["28"] }}</strong> have 28s.</p>
+          <p><strong>{{ data["flairs_number"]["27"] }}</strong> have 27s.</p>
+          <p><strong>{{ data["flairs_number"]["26"] }}</strong> have 26s.</p>
+          <p><strong>{{ data["flairs_number"]["25"] }}</strong> have 25s.</p>
+          <p><strong>{{ data["flairs_number"]["24"] }}</strong> have 24s.</p>
+          <p><strong>{{ data["flairs_number"]["23"] }}</strong> have 23s.</p>
+          <p><strong>{{ data["flairs_number"]["22"] }}</strong> have 22s.</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #E59500">Orange</span> Flair</h4>
+          <p><strong>{{ data["flairs_number"]["21"] }}</strong> have 21s.</p>
+          <p><strong>{{ data["flairs_number"]["20"] }}</strong> have 20s.</p>
+          <p><strong>{{ data["flairs_number"]["19"] }}</strong> have 19s.</p>
+          <p><strong>{{ data["flairs_number"]["18"] }}</strong> have 18s.</p>
+          <p><strong>{{ data["flairs_number"]["17"] }}</strong> have 17s.</p>
+          <p><strong>{{ data["flairs_number"]["16"] }}</strong> have 16s.</p>
+          <p><strong>{{ data["flairs_number"]["15"] }}</strong> have 15s.</p>
+          <p><strong>{{ data["flairs_number"]["14"] }}</strong> have 14s.</p>
+          <p><strong>{{ data["flairs_number"]["13"] }}</strong> have 13s.</p>
+          <p><strong>{{ data["flairs_number"]["12"] }}</strong> have 12s.</p>
+        </div>
+          
+        <div class="col-lg-4">
+          <h4><span style="color: #E50000">Red</span> Flair</h4>
+          <p><strong>{{ data["flairs_number"]["11"] }}</strong> have 11s.</p>
+          <p><strong>{{ data["flairs_number"]["10"] }}</strong> have 10s.</p>
+          <p><strong>{{ data["flairs_number"]["9"] }}</strong> have 9s.</p>
+          <p><strong>{{ data["flairs_number"]["8"] }}</strong> have 8s.</p>
+          <p><strong>{{ data["flairs_number"]["7"] }}</strong> have 7s.</p>
+          <p><strong>{{ data["flairs_number"]["6"] }}</strong> have 6s.</p>
+          <p><strong>{{ data["flairs_number"]["5"] }}</strong> have 5s.</p>
+          <p><strong>{{ data["flairs_number"]["4"] }}</strong> have 4s.</p>
+          <p><strong>{{ data["flairs_number"]["3"] }}</strong> have 3s.</p>
+          <p><strong>{{ data["flairs_number"]["2"] }}</strong> have 2s.</p>
+          <p><strong>{{ data["flairs_number"]["1"] }}</strong> have 1s.</p>
+        </div>
+        <small>Flair data provided by /u/mjgcfb. Click <a data-toggle="popover" data-placement="right" data-container="body"
+                                                          data-html="true" role="button" tabindex="0" data-trigger="focus"
+                                                          data-content="<ul>
+                                                          <li>Users with Grey/No Flair are not included.</li>
+                                                          <li>Only users who have commented on /r/thebutton are included.</li>
+                                                          <li>Users must have commented after pressing the button.</li>
+                                                          </ul>" href="javascript:void(0)">here</a> for information.</small>
+      </div>
+
+      <footer class="footer">
+        <small>Overall counts and the lowest time are updated once per second, flair breakdown every five minutes, all else every five seconds.</small>
+        <p><a href="https://github.com/Chr12t0pher/r-slash-thebutton">See the Source Code on Github</a></p>
+      </footer>
+    </div> <!-- /container -->
+
+
+    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script src="/static/js/ripples.min.js"></script>
+    <script src="/static/js/material.min.js"></script>
+    <script> // Popover enabled.
+$(function () {
+  $('[data-toggle="popover"]').popover()
+})
+</script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-41885449-6', 'auto');
+  ga('send', 'pageview');
+
+</script>
+  </body>
+</html>

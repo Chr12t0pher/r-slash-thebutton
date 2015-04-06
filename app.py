@@ -100,7 +100,9 @@ def flair_data():
     sleep(10)
     while True:
         with open(flairfile, "r") as f:
-            button_data["flairs"] = loads(f.read())
+            data = loads(f.read())
+            button_data["flairs"] = data["colours"]
+            button_data["flairs_number"] = data["counts"]
         with open(currentflairfile, "r") as f:
             button_data["current_flair"] = loads(f.read())
         sleep(150)
@@ -123,6 +125,11 @@ def home():
 @app.route("/times")
 def times():
     return render_template("times.html", data=historic_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+
+
+@app.route("/flairs")
+def flairs():
+    return render_template("flairs.html", data=button_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
 
 
 @app.route("/donate")
