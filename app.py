@@ -16,9 +16,12 @@ bot.login("TheButtonStatsBot", secret)
 
 
 if platform == "win32":  # If running locally.
-    lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json"; historicfile = "historic.json"
+    lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json";
+    historicfile = "historic.json"; milestonefile = "milestones.json"
 else:  # If running in production.
-    lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json"; currentflairfile = "/var/www/FlaskApp/currentflair.json"; historicfile = "/var/www/FlaskApp/historic.json"
+    lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json";
+    currentflairfile = "/var/www/FlaskApp/currentflair.json"; historicfile = "/var/www/FlaskApp/historic.json";
+    milestonefile = "/var/www/FlaskApp/milestones.json"
 
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
@@ -53,7 +56,7 @@ def socket_controller():
                                                            message_dict["now_str"][-8:].replace("-", ":")
                 with open(lowestfile, "w") as f:
                     f.write(dumps(button_data["lowestTime"]["all"]))
-                threading.Thread(target=reddit_bot, args=(button_data["lowestTime"]["all"]["clicks"],)).start()
+                threading.Thread(target=reddit_low, args=(button_data["lowestTime"]["all"]["clicks"],)).start()
             button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
 
     while True:
@@ -108,13 +111,28 @@ def flair_data():
         sleep(150)
 
 
-def reddit_bot(start_time):
+def reddit_low(start_time):
     sleep(10)
     if start_time == button_data["lowestTime"]["all"]["clicks"]:
         bot.submit("thebutton",
                    "Just now, at {} UTC, the button went down to {} seconds.".format(
                        button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
                    url="http://46.101.29.145/times", resubmit=True)
+
+
+def reddit_milestone():
+    with open(milestonefile, "r") as f:
+        milestones = loads(f.read())
+    while True:
+        if int(button_data["clicks"]["all"]) >= milestones[0]:
+            bot.submit("thebutton",
+                       "Just now, at {} UTC, the button surpassed {} clicks.".format(
+                            datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
+                       url="http://46.101.29.145/", resubmit=True)
+            milestones.pop(0)
+            with open(milestonefile, "w") as f:
+                f.write(dumps(milestones))
+        sleep(5)
 
 
 @app.route("/")
@@ -148,4 +166,5 @@ if __name__ == "__main__":
     threading.Thread(target=historic_append).start()
     threading.Thread(target=calculate_averages).start()
     threading.Thread(target=flair_data).start()
+    threading.Thread(target=reddit_milestone).start()
     app.run(debug=True, use_reloader=False, threaded=True)
