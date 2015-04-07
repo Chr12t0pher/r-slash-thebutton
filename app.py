@@ -136,6 +136,13 @@ def flairs():
 def donate():
     return render_template("donate.html", time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
 
+
+@app.route("/json")
+def json():
+    json_data = button_data
+    json_data["generated_at"] = datetime.datetime.utcnow().strftime("%H:%M:%S")
+    return dumps(json_data)
+
 if __name__ == "__main__":
     threading.Thread(target=socket_controller).start()
     threading.Thread(target=historic_append).start()
