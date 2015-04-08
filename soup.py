@@ -9,7 +9,7 @@ while True:
     flairs = {"colours": {"grey": 0, "purple": 0, "blue": 0, "green": 0, "yellow": 0, "orange": 0, "red": 0},
               "counts": {}}
 
-    flair_data = requests.get("http://www.streamingflair.com/thebutton/rawthebutton/").text
+    flair_data = requests.get("http://www.streamingflair.com/thebutton/rawthebutton2/").text
     flair_soup = BeautifulSoup(flair_data).find(id="table1").find_all("tr")
     flair_soup.pop(0)
 
