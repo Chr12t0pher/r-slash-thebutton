@@ -117,21 +117,101 @@ def reddit_low(start_time):
         bot.submit("thebutton",
                    "Just now, at {} UTC, the button went down to {} seconds.".format(
                        button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
-                   url="http://46.101.29.145/times", resubmit=True)
+                   text=""")
+#Button Statistics at {} UTC
+
+Clicks Per Second | Time Frame | Number Of Clicks
+-----------------|:----------:|------------:
+{} | _Overall_ | {}
+{} | _Past 01m_ | {}
+{} | _Past 10m_ | {}
+{} | _Past 60m_ | {}
+
+Flair Colour | Count no. | Count %
+------------|---------|-------
+Purple | {} | {}
+Blue | {} | {}
+Green | {} | {}
+Yellow | {} | {}
+Orange | {} | {}
+Red | {} | {}
+
+>### Lowest time reached at the time of posting
+>__{}__ at {} UTC
+
+^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
+
+^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://46.101.29.145/) ^_&_
+[^_streamingflair_](http://www.streamingflair.com/thebutton/rawthebutton/)
+""".format(datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
+                    button_data["clicks_second"]["all"], button_data["clicks"]["all"],
+                    button_data["clicks_second"]["1m"], button_data["clicks"]["1m"],
+                    button_data["clicks_second"]["10m"], button_data["clicks"]["10m"],
+                    button_data["clicks_second"]["60m"], button_data["clicks"]["60m"],
+
+                    button_data["flairs"]["purple"], button_data["current_flair"]["purple"],
+                    button_data["flairs"]["blue"], button_data["current_flair"]["blue"],
+                    button_data["flairs"]["green"], button_data["current_flair"]["green"],
+                    button_data["flairs"]["yellow"], button_data["current_flair"]["yellow"],
+                    button_data["flairs"]["orange"], button_data["current_flair"]["orange"],
+                    button_data["flairs"]["red"], button_data["current_flair"]["red"],
+
+                    button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
 
 
 def reddit_milestone():
     with open(milestonefile, "r") as f:
         milestones = loads(f.read())
+    sleep(30)
     while True:
         if int(button_data["clicks"]["all"]) >= milestones[0]:
-            bot.submit("thebutton",
+            bot.submit("wpctesting",
                        "Just now, at {} UTC, the button surpassed {} clicks.".format(
                             datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
-                       url="http://46.101.29.145/", resubmit=True)
+                       text="""
+#Button Statistics at {} UTC
+
+Clicks Per Second | Time Frame | Number Of Clicks
+-----------------|:----------:|------------:
+{} | _Overall_ | {}
+{} | _Past 01m_ | {}
+{} | _Past 10m_ | {}
+{} | _Past 60m_ | {}
+
+Flair Colour | Count no. | Count %
+------------|---------|-------
+Purple | {} | {}
+Blue | {} | {}
+Green | {} | {}
+Yellow | {} | {}
+Orange | {} | {}
+Red | {} | {}
+
+>### Lowest time reached at the time of posting
+>__{}__ at {} UTC
+
+^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
+
+^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://46.101.29.145/) ^_&_
+[^_streamingflair_](http://www.streamingflair.com/thebutton/rawthebutton/)
+""".format(datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
+                    button_data["clicks_second"]["all"], button_data["clicks"]["all"],
+                    button_data["clicks_second"]["1m"], button_data["clicks"]["1m"],
+                    button_data["clicks_second"]["10m"], button_data["clicks"]["10m"],
+                    button_data["clicks_second"]["60m"], button_data["clicks"]["60m"],
+
+                    button_data["flairs"]["purple"], button_data["current_flair"]["purple"],
+                    button_data["flairs"]["blue"], button_data["current_flair"]["blue"],
+                    button_data["flairs"]["green"], button_data["current_flair"]["green"],
+                    button_data["flairs"]["yellow"], button_data["current_flair"]["yellow"],
+                    button_data["flairs"]["orange"], button_data["current_flair"]["orange"],
+                    button_data["flairs"]["red"], button_data["current_flair"]["red"],
+
+                    button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
             milestones.pop(0)
             with open(milestonefile, "w") as f:
                 f.write(dumps(milestones))
+            sleep(5)
         sleep(5)
 
 
