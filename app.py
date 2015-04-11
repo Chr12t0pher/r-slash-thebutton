@@ -114,10 +114,13 @@ def flair_data():
 def reddit_low(start_time):
     sleep(10)
     if start_time == button_data["lowestTime"]["all"]["clicks"]:
+        for post in bot.get_redditor("TheButtonStatsBot").get_submitted(sort="new"):
+            if "{} seconds.".format(start_time) in post.title:
+                return
         bot.submit("thebutton",
                    "Just now, at {} UTC, the button went down to {} seconds.".format(
                        button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
-                   text=""")
+                   text="""
 #Button Statistics at {} UTC
 
 Clicks Per Second | Time Frame | Number Of Clicks
@@ -165,9 +168,12 @@ def reddit_milestone():
     sleep(30)
     while True:
         if int(button_data["clicks"]["all"]) >= milestones[0]:
-            bot.submit("wpctesting",
+            for post in bot.get_redditor("TheButtonStatsBot").get_submitted(sort="new"):
+                if "{} clicks.".format(milestones[0]) in post.title:
+                    return
+            bot.submit("thebutton",
                        "Just now, at {} UTC, the button surpassed {} clicks.".format(
-                            datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
+                           datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
                        text="""
 #Button Statistics at {} UTC
 
