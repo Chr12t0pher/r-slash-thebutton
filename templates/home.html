@@ -1,47 +1,9 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Statistics for reddits 'the button'.">
-    <meta name="google-site-verification" content="U9szASir3zbItLnYIKpGzbvLonLP3KqckMqSb2E6D10" />
+{% extends "template.html" %}
+{% set active = "home" %}
 
-    <title>Home - /r/thebutton stats</title>
+{% block title %}Home{% endblock %}
 
-    <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this templates -->
-    <link href="/static/css/jumbotron-narrow.css" rel="stylesheet">
-    <link href="/static/css/roboto.min.css" rel="stylesheet">
-    <link href="/static/css/material.min.css" rel="stylesheet">
-    <link href="/static/css/ripples.min.css" rel="stylesheet">
-
-    <style type="text/css">@media (max-width: 765px) {.adslot {display: none;} .adblock {display:none;}}
-    .adslot {height: 90px; width: 728px;}</style>
-</head>
-
-<body>
-<div class="container">
-    <div class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li class="active"><a href="javascript:void(0)">Home</a></li>
-                <li><a href="/times">Times</a></li>
-                <li><a href="/flairs">Flairs</a></li>
-                <li><a href="/donate">Donate</a></li>
-            </ul>
-        </nav>
-        <h5 class="text-muted">Generated at {{ time[0] }} UTC. Started on {{ time[1] }} UTC.</h5>
-        <small class="text-muted">Data may be incomplete/inaccurate for up to one hour after service start.</small>
-    </div>
-    <div class="jumbotron">
-        <h1>/r/thebutton statistics</h1>
-        <p class="lead">Lowest time reached, flair breakdowns, and more!</p>
-        <p><a class="btn btn-lg" id="mainbutton" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
-    </div>
-
+{% block main %}
     <div class="row">
         <div class="col-lg-6">
             <h4>Clicks Per Second (Overall)</h4>
@@ -106,48 +68,18 @@
             <p>Got an idea for another statistic to show? Message <strong>Chr12t0pher</strong> on reddit!</p><br>
         </div>
     </div>
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- button stats -->
-<ins class="adsbygoogle adslot"
-     style="display:inline-block"
-     data-ad-client="ca-pub-0334153774338665"
-     data-ad-slot="4271301333"
-     data-ad-format="horizontal"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-	<small class="adblock"><i>If you use adblock, please consider disabling here as it helps me provide this content to you, alternatively consider <a href="/donate">donating</a> a few pounds/dollars.</i></small>
-    <footer class="footer">
-        <small>Overall counts and the lowest time are updated once per second, flair breakdown every five minutes, all else every five seconds.</small>
-        <p><a href="https://github.com/Chr12t0pher/r-slash-thebutton">See the Source Code on Github</a></p>
-    </footer>
-</div> <!-- /container -->
+{% endblock %}
 
-
-<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script src="/static/js/ripples.min.js"></script>
-<script src="/static/js/material.min.js"></script>
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-41885449-6', 'auto');
-    ga('send', 'pageview');
-
-</script>
-<script> // Popover enabled.
-$(function () {
-  $('[data-toggle="popover"]').popover()
-})
-</script>
-<script> // Random coloured button.
-$(document).ready( function() {
-    var colours = ["purple", "blue", "green", "yellow", "orange", "red"];
-    $("#mainbutton").addClass("btn-material-" + colours[Math.floor(Math.random() * colours.length)]);
-})
-</script>
-</body>
-</html>
+{% block js %}
+    <script> // Popover enabled.
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+    </script>
+    <script> // Random coloured button.
+    $(document).ready( function() {
+        var colours = ["purple", "blue", "green", "yellow", "orange", "red"];
+        $("#mainbutton").addClass("btn-material-" + colours[Math.floor(Math.random() * colours.length)]);
+    })
+    </script>
+{% endblock %}
