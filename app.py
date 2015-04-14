@@ -19,9 +19,9 @@ if platform == "win32":  # If running locally.
     lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json";
     historicfile = "historic.json"; milestonefile = "milestones.json"
 else:  # If running in production.
-    lowestfile = "/var/www/FlaskApp/lowest.json"; flairfile = "/var/www/FlaskApp/flair.json";
-    currentflairfile = "/var/www/FlaskApp/currentflair.json"; historicfile = "/var/www/FlaskApp/historic.json";
-    milestonefile = "/var/www/FlaskApp/milestones.json"
+    lowestfile = "/home/www/lowest.json"; flairfile = "/home/www/flair.json";
+    currentflairfile = "/home/www/currentflair.json"; historicfile = "/home/www/historic.json";
+    milestonefile = "/home/www/milestones.json"
 
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
@@ -144,8 +144,7 @@ Red | {} | {}
 
 ^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
 
-^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://46.101.29.145/) ^_&_
-[^_streamingflair_](http://www.streamingflair.com/thebutton/rawthebutton/)
+^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://button.cstevens.me/)
 """.format(datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
                     button_data["clicks_second"]["all"], button_data["clicks"]["all"],
                     button_data["clicks_second"]["1m"], button_data["clicks"]["1m"],
@@ -198,8 +197,7 @@ Red | {} | {}
 
 ^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
 
-^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://46.101.29.145/) ^_&_
-[^_streamingflair_](http://www.streamingflair.com/thebutton/rawthebutton/)
+^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://button.cstevens.me/)
 """.format(datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
                     button_data["clicks_second"]["all"], button_data["clicks"]["all"],
                     button_data["clicks_second"]["1m"], button_data["clicks"]["1m"],
@@ -223,22 +221,27 @@ Red | {} | {}
 
 @app.route("/")
 def home():
-    return render_template("home.html", data=button_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+    return render_template("home.html", data=button_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/times")
 def times():
-    return render_template("times.html", data=historic_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+    return render_template("times.html", data=historic_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/flairs")
 def flairs():
-    return render_template("flairs.html", data=button_data, time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+    return render_template("flairs.html", data=button_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+
+
+@app.route("/graphs")
+def graphs():
+    return render_template("graphs.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/donate")
 def donate():
-    return render_template("donate.html", time=[datetime.datetime.utcnow().strftime("%H:%M:%S"), starttime])
+    return render_template("donate.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/json")
