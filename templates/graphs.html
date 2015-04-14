@@ -1,0 +1,75 @@
+{% extends "template.html" %}
+{% set active = "graphs" %}
+
+{% block title %}Graphs{% endblock %}
+
+{% block main %}
+    <div class="alert alert-warning"><b>Warning</b>: This part of the site is in beta! Charts are currently static and do not update in real time.</div>
+
+    <div class="well">
+        <div id="chart_div"></div>
+    </div>
+{% endblock %}
+{% block js %}
+<script> // Random coloured button.
+$(document).ready( function() {
+    var colours = ["purple", "blue", "green", "yellow", "orange", "red"];
+    $("#mainbutton").addClass("btn-material-" + colours[Math.floor(Math.random() * colours.length)]);
+})
+</script>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script> // Lowest Time Visualisation Chart
+    google.load('visualization', '1.1', {packages: ['scatter']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'Time');
+        data.addColumn('number', 'Second Reached');
+        data.addRows([
+            [new Date(2015, 03, 02, 2, 53, 30), 55],
+            [new Date(2015, 03, 02, 2, 53, 31), 54],
+            [new Date(2015, 03, 02, 3, 19, 13), 53],
+            [new Date(2015, 03, 02, 3, 19, 14), 52],
+            [new Date(2015, 03, 02, 5, 50, 54), 51],
+            [new Date(2015, 03, 02, 6, 26, 13), 50],
+            [new Date(2015, 03, 02, 7, 47, 3), 49],
+            [new Date(2015, 03, 02, 8, 33, 33), 48],
+            [new Date(2015, 03, 02, 23, 9, 14), 47],
+            [new Date(2015, 03, 02, 23, 9, 15), 46],
+            [new Date(2015, 03, 02, 23, 9, 16), 45],
+            [new Date(2015, 03, 03, 2, 0, 21), 44],
+            [new Date(2015, 03, 03, 2, 25, 56), 43],
+            [new Date(2015, 03, 03, 5, 46, 1), 42],
+            [new Date(2015, 03, 03, 7, 19, 27), 41],
+            [new Date(2015, 03, 03, 8, 32, 15), 40],
+            [new Date(2015, 03, 03, 9, 9, 49), 39],
+            [new Date(2015, 03, 03, 9, 9, 50), 38],
+            [new Date(2015, 03, 03, 11, 21, 41), 37],
+            [new Date(2015, 03, 04, 8, 54, 2), 36],
+            [new Date(2015, 03, 04, 13, 3, 39), 35],
+            [new Date(2015, 03, 08, 8, 55, 9), 34],
+            [new Date(2015, 03, 08, 8, 55, 10), 33],
+            [new Date(2015, 03, 09, 6, 33, 26), 32],
+            [new Date(2015, 03, 09, 8, 1, 26), 31],
+            [new Date(2015, 03, 09, 9, 50, 4), 30],
+            [new Date(2015, 03, 10, 9, 58, 15), 29],
+            [new Date(2015, 03, 11, 9, 48, 0), 28],
+            [new Date(2015, 03, 11, 9, 48, 1), 27],
+        ]);
+
+        var options = {
+            title: 'Lowest Time Visualisation',
+            height: 450,
+            width: 600,
+            hAxis: {format: 'MMM dd, HH:mm'},
+            pointSize: 7
+        };
+
+        var chart = new google.charts.Scatter(document.getElementById('chart_div'));
+
+        chart.draw(data, google.charts.Scatter.convertOptions(options));
+    }
+</script>
+{% endblock %}
