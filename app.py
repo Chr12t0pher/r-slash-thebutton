@@ -239,6 +239,11 @@ def graphs():
     return render_template("graphs.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
+@app.route("/about")
+def about():
+    return render_template("about.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+
+
 @app.route("/donate")
 def donate():
     return render_template("donate.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
