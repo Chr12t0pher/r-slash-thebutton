@@ -50,6 +50,7 @@
 
     {% endblock %}
     {% block ad %}
+        <div class="ad-wrap">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!-- button stats -->
         <ins class="adsbygoogle adslot"
@@ -60,6 +61,7 @@
         <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
+        </div>
     {% endblock %}
 
     <footer class="footer">
@@ -81,7 +83,15 @@
     ga('create', 'UA-41885449-6', 'auto');
     ga('send', 'pageview');
 </script>
-
+<script>
+        $(document).ready(function () {
+            if ($(".ad-wrap").height() == 0) {
+                var message = '<div class="alert alert-warning">Please consider disabling your adblocking software, as a 16 year old developer I can only keep the site running through ad revenue. Alternatively, please consider <a href="/donate" class="alert-link">donating</a>.</div>';
+                $(message).insertAfter($(".jumbotron"));
+                console.log("asdasd");
+            }
+        })
+        </script>
 {% block js %}
 
 {% endblock %}
