@@ -18,8 +18,7 @@
     <link href="/static/css/material.min.css" rel="stylesheet">
     <link href="/static/css/ripples.min.css" rel="stylesheet">
 
-    <style type="text/css">@media (max-width: 765px) {.adslot {display: none;} .adblock {display:none;}}
-    .adslot {height: 90px; width: 728px;}</style>
+    <style type="text/css">.adslot {height: 90px; width: 728px;}</style>
 
     {% block css %}{% endblock %}
 </head>
@@ -53,13 +52,15 @@
         <div class="ad-wrap">
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!-- button stats -->
-        <ins class="adsbygoogle adslot"
+        <ins class="adsbygoogle adslot hidden-xs"
              style="display:inline-block"
              data-ad-client="ca-pub-0334153774338665"
              data-ad-slot="4271301333"
              data-ad-format="horizontal"></ins>
         <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
+            window.onload = function() {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            };
         </script>
         </div>
     {% endblock %}
@@ -86,9 +87,11 @@
 <script>
         $(document).ready(function () {
             if ($(".ad-wrap").height() == 0) {
-                var message = '<div class="alert alert-warning">Please consider disabling your adblocking software, as a 16 year old developer I can only keep the site running through ad revenue. Alternatively, please consider <a href="/donate" class="alert-link">donating</a>.</div>';
-                $(message).insertAfter($(".jumbotron"));
-                console.log("asdasd");
+                if ($(window).width() < 768) {}
+                else {
+                    var message = '<div class="alert alert-warning">Please consider disabling your adblocking software, as a 16 year old developer I can only keep the site running through ad revenue. Alternatively, please consider <a href="/donate" class="alert-link">donating</a>.</div>';
+                    $(message).insertAfter($(".jumbotron"));
+                }
             }
         })
         </script>
