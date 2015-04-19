@@ -17,11 +17,11 @@ bot.login("TheButtonStatsBot", secret)
 
 if platform == "win32":  # If running locally.
     lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json";
-    historicfile = "historic.json"; milestonefile = "milestones.json"
+    historicfile = "historic.json"; milestonefile = "milestones.json"; usersfile = "users.json"
 else:  # If running in production.
     lowestfile = "/home/www/lowest.json"; flairfile = "/home/www/flair.json";
     currentflairfile = "/home/www/currentflair.json"; historicfile = "/home/www/historic.json";
-    milestonefile = "/home/www/milestones.json"
+    milestonefile = "/home/www/milestones.json"; usersfile = "/home/www/users.json"
 
 starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
 
@@ -114,13 +114,10 @@ def flair_data():
 def reddit_low(start_time):
     sleep(10)
     if start_time == button_data["lowestTime"]["all"]["clicks"]:
-        for post in bot.get_redditor("TheButtonStatsBot").get_submitted(sort="new"):
-            if "{} seconds.".format(start_time) in post.title:
-                return
-        bot.submit("thebutton",
-                   "Just now, at {} UTC, the button went down to {} seconds.".format(
-                       button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
-                   text="""
+        post = bot.submit("thebutton",
+                          "Just now, at {} UTC, the button went down to {} seconds.".format(
+                              button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
+                          text="""
 #Button Statistics at {} UTC
 
 Clicks Per Second | Time Frame | Number Of Clicks
@@ -159,6 +156,15 @@ Red | {} | {}
                     button_data["flairs"]["red"], button_data["current_flair"]["red"],
 
                     button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
+        with open(usersfile, "r") as f:
+            subscribers = loads(f.read())
+        post.add_comment("""
+Notifying the following users of a new low score:\n
+\n/u/{}\n
+\nClick [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
+to be notified, or [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe)
+to stop receiving notifications.
+        """.format(", /u/".join(subscribers["users"])))
 
 
 def reddit_milestone():
@@ -167,13 +173,10 @@ def reddit_milestone():
     sleep(30)
     while True:
         if int(button_data["clicks"]["all"]) >= milestones[0]:
-            for post in bot.get_redditor("TheButtonStatsBot").get_submitted(sort="new"):
-                if "{} clicks.".format(milestones[0]) in post.title:
-                    return
-            bot.submit("thebutton",
-                       "Just now, at {} UTC, the button surpassed {} clicks.".format(
-                           datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
-                       text="""
+            post = bot.submit("thebutton",
+                              "Just now, at {} UTC, the button surpassed {} clicks.".format(
+                                  datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
+                              text="""
 #Button Statistics at {} UTC
 
 Clicks Per Second | Time Frame | Number Of Clicks
@@ -215,8 +218,37 @@ Red | {} | {}
             milestones.pop(0)
             with open(milestonefile, "w") as f:
                 f.write(dumps(milestones))
+            with open(usersfile, "r") as f:
+                subscribers = loads(f.read())
+            post.add_comment("""
+Notifying the following users of a new click milestone:\n
+\n/u/{}\n
+\nClick [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
+to be notified, or [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe)
+to stop receiving notifications.
+            """.format(", /u/".join(subscribers["users"])))
             sleep(5)
         sleep(5)
+
+
+def reddit_sub_unsub():
+    sleep(10)
+    with open(usersfile, "r") as f:
+        subscribers = loads(f.read())
+    while True:
+        messages = bot.get_messages()
+        for message in messages:
+            if message.body == "!subscribe" and message.id not in subscribers["messages"]:
+                if message.author.name not in subscribers["users"]:
+                    subscribers["users"].append(message.author.name)
+                subscribers["messages"].append(message.id)
+            if message.body == "!unsubscribe" and message.id not in subscribers["messages"]:
+                if message.author.name in subscribers["users"]:
+                    subscribers["users"].pop(subscribers["users"].index(message.author.name))
+                subscribers["messages"].append(message.id)
+        with open(usersfile, "w") as f:
+            f.write(dumps(subscribers))
+        sleep(60)
 
 
 @app.route("/")
@@ -261,4 +293,5 @@ if __name__ == "__main__":
     threading.Thread(target=calculate_averages).start()
     threading.Thread(target=flair_data).start()
     threading.Thread(target=reddit_milestone).start()
+    threading.Thread(target=reddit_sub_unsub).start()
     app.run(debug=True, use_reloader=False, threaded=True)
