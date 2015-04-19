@@ -69,20 +69,5 @@ def five_minute():
         sleep(300)
 
 
-def fiveteen_seconds():
-    bot = praw.Reddit(user_agent="/r/thebutton Stats Poster (contact /u/Chr12t0pher)")
-    bot.login("TheButtonStatsBot", secret)
-    while True:
-        user = bot.get_redditor("TheButtonStatsBot")
-        posts = user.get_submitted(sort="new")
-        title_list = []
-        for post in posts:
-            if post.title in title_list:
-                post.delete()
-            title_list.append(post.title)
-        sleep(15)
-
-
 if __name__ == "__main__":
     threading.Thread(target=five_minute).start()
-    threading.Thread(target=fiveteen_seconds).start()
