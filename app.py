@@ -2,7 +2,7 @@ from ws4py.client.threadedclient import WebSocketClient
 from ws4py.exc import HandshakeError
 from ast import literal_eval
 import threading
-from flask import Flask, render_template
+from flask import Flask, render_template, flash
 import datetime
 from json import loads, dumps
 from time import sleep
@@ -10,10 +10,12 @@ from sys import platform
 import requests
 import praw
 from secret import secret
+from os import urandom
+import sendgrid
 
 bot = praw.Reddit(user_agent="/r/thebutton Stats Poster (contact /u/Chr12t0pher)")
-bot.login("TheButtonStatsBot", secret)
-
+bot.login("TheButtonStatsBot", secret[0])
+sg = sendgrid.SendGridClient("Chr12t0pher", secret[1])
 
 if platform == "win32":  # If running locally.
     lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json";
@@ -40,6 +42,7 @@ with open(historicfile, "r") as f:
     historic_data = loads(f.read())
 
 app = Flask(__name__)
+app.secret_key = urandom(24)
 
 
 def socket_controller():
@@ -139,6 +142,11 @@ Red | {} | {}
 >### Lowest time reached at the time of posting
 >__{}__ at {} UTC
 
+
+Want to get notified when new milestones are achieved? Click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
+to subscribe to Reddit PMs, or [here](http://button.cstevens.me/notify) for email alerts.
+
+
 ^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
 
 ^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://button.cstevens.me/)
@@ -158,13 +166,18 @@ Red | {} | {}
                     button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
         with open(usersfile, "r") as f:
             subscribers = loads(f.read())
-        post.add_comment("""
-Notifying the following users of a new low score:\n
-\n/u/{}\n
-\nClick [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
-to be notified, or [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe)
-to stop receiving notifications.
-        """.format(", /u/".join(subscribers["users"])))
+        status, msg = sg.send(sendgrid.Mail(to=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
+                                            from_email="button@cstevens.me", text="""
+The button has gone down to {} seconds! See the stats at {}.
+
+To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(button_data["lowestTime"]["all"]["clicks"], post.url)))
+        for user in subscribers["users"]:
+            bot.send_message(user, "[/r/thebutton stats] New low time!", """
+The button has gone down to {} seconds! Click [here]({}) to view the stats.
+
+To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
+""".format(button_data["lowestTime"]["all"]["clicks"], post.url))
+            sleep(2)
 
 
 def reddit_milestone():
@@ -198,6 +211,11 @@ Red | {} | {}
 >### Lowest time reached at the time of posting
 >__{}__ at {} UTC
 
+
+Want to get notified when new milestones are achieved? Click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
+to subscribe to Reddit PMs, or [here](http://button.cstevens.me/notify) for email alerts.
+
+
 ^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
 
 ^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://button.cstevens.me/)
@@ -220,13 +238,18 @@ Red | {} | {}
                 f.write(dumps(milestones))
             with open(usersfile, "r") as f:
                 subscribers = loads(f.read())
-            post.add_comment("""
-Notifying the following users of a new click milestone:\n
-\n/u/{}\n
-\nClick [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
-to be notified, or [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe)
-to stop receiving notifications.
-            """.format(", /u/".join(subscribers["users"])))
+            status, msg = sg.send(sendgrid.Mail(to=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
+                                                from_email="button@cstevens.me", text="""
+The button has passed {} clicks! See the stats at {}.
+
+To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(milestones[0], post.url)))
+            for user in subscribers["users"]:
+                bot.send_message(user, "[/r/thebutton stats] New low time!", """
+The button has passed {} clicks! Click [here]({}) to view the stats.
+
+To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
+""".format(milestones[0], post.url))
+                sleep(2)
             sleep(5)
         sleep(5)
 
@@ -274,6 +297,26 @@ def graphs():
 @app.route("/about")
 def about():
     return render_template("about.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+
+
+@app.route("/notify")
+def notify():
+    return render_template("notify.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+
+
+@app.route("/notify/<email>")
+def notify_sub_unsub(email):
+    with open(usersfile, "r") as f:
+        users = loads(f.read())
+    if email in users["emails"]:
+        users["emails"].pop(users["emails"].index(email))
+        flash("You have successfully unsubscribed!", "success")
+    else:
+        users["emails"].append(email)
+        flash("You have successfully subscribed!", "success")
+    with open(usersfile, "w") as f:
+        f.write(dumps(users))
+    return render_template("notify.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/donate")
