@@ -143,8 +143,7 @@ Red | {} | {}
 >__{}__ at {} UTC
 
 
-Want to get notified when new milestones are achieved? Click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
-to subscribe to Reddit PMs, or [here](http://button.cstevens.me/notify) for email alerts.
+Want to get notified when new milestones are achieved? Click [here](http://button.cstevens.me/notify) for email alerts.
 
 
 ^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
@@ -170,13 +169,13 @@ to subscribe to Reddit PMs, or [here](http://button.cstevens.me/notify) for emai
                                             from_email="button@cstevens.me", text="""
 The button has gone down to {} seconds! See the stats at {}.
 
-To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(button_data["lowestTime"]["all"]["clicks"], post.url)))
+To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(button_data["lowestTime"]["all"]["clicks"], post.url.replace("www", "np"))))
         for user in subscribers["users"]:
             bot.send_message(user, "[/r/thebutton stats] New low time!", """
 The button has gone down to {} seconds! Click [here]({}) to view the stats.
 
 To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
-""".format(button_data["lowestTime"]["all"]["clicks"], post.url))
+""".format(button_data["lowestTime"]["all"]["clicks"], post.url.replace("www", "np")))
             sleep(2)
 
 
@@ -212,8 +211,7 @@ Red | {} | {}
 >__{}__ at {} UTC
 
 
-Want to get notified when new milestones are achieved? Click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Subscribing&message=!subscribe)
-to subscribe to Reddit PMs, or [here](http://button.cstevens.me/notify) for email alerts.
+Want to get notified when new milestones are achieved? Click [here](http://button.cstevens.me/notify) for email alerts.
 
 
 ^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
@@ -233,23 +231,23 @@ to subscribe to Reddit PMs, or [here](http://button.cstevens.me/notify) for emai
                     button_data["flairs"]["red"], button_data["current_flair"]["red"],
 
                     button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
-            milestones.pop(0)
-            with open(milestonefile, "w") as f:
-                f.write(dumps(milestones))
             with open(usersfile, "r") as f:
                 subscribers = loads(f.read())
             status, msg = sg.send(sendgrid.Mail(to=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
                                                 from_email="button@cstevens.me", text="""
 The button has passed {} clicks! See the stats at {}.
 
-To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(milestones[0], post.url)))
+To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(milestones[0], post.url.replace("www", "np"))))
             for user in subscribers["users"]:
                 bot.send_message(user, "[/r/thebutton stats] New low time!", """
 The button has passed {} clicks! Click [here]({}) to view the stats.
 
 To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
-""".format(milestones[0], post.url))
+""".format(milestones[0], post.url.replace("www", "np")))
                 sleep(2)
+            milestones.pop(0)
+            with open(milestonefile, "w") as f:
+                f.write(dumps(milestones))
             sleep(5)
         sleep(5)
 
@@ -261,14 +259,14 @@ def reddit_sub_unsub():
     while True:
         messages = bot.get_messages(limit=None, place_holder=subscribers["last"])
         for message in messages:
-            if message.body == "!subscribe" and message.author.name not in subscribers["users"]:
-                subscribers["users"].append(message.author.name)
+            #if message.body == "!subscribe" and message.author.name not in subscribers["users"]:
+                #subscribers["users"].append(message.author.name)
             if message.body == "!unsubscribe" and message.author.name in subscribers["users"]:
                 subscribers["users"].pop(subscribers["users"].index(message.author.name))
             subscribers["last"] = message.id
         with open(usersfile, "w") as f:
             f.write(dumps(subscribers))
-        sleep(60)
+        sleep(120)
 
 
 @app.route("/")
