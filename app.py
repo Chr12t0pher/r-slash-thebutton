@@ -259,16 +259,13 @@ def reddit_sub_unsub():
     with open(usersfile, "r") as f:
         subscribers = loads(f.read())
     while True:
-        messages = bot.get_messages()
+        messages = bot.get_messages(limit=None, place_holder=subscribers["last"])
         for message in messages:
-            if message.body == "!subscribe" and message.id not in subscribers["messages"]:
-                if message.author.name not in subscribers["users"]:
-                    subscribers["users"].append(message.author.name)
-                subscribers["messages"].append(message.id)
-            if message.body == "!unsubscribe" and message.id not in subscribers["messages"]:
-                if message.author.name in subscribers["users"]:
-                    subscribers["users"].pop(subscribers["users"].index(message.author.name))
-                subscribers["messages"].append(message.id)
+            if message.body == "!subscribe" and message.author.name not in subscribers["users"]:
+                subscribers["users"].append(message.author.name)
+            if message.body == "!unsubscribe" and message.author.name in subscribers["users"]:
+                subscribers["users"].pop(subscribers["users"].index(message.author.name))
+            subscribers["last"] = message.id
         with open(usersfile, "w") as f:
             f.write(dumps(subscribers))
         sleep(60)
