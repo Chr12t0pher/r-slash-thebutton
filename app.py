@@ -165,7 +165,7 @@ Want to get notified when new milestones are achieved? Click [here](http://butto
                     button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
         with open(usersfile, "r") as f:
             subscribers = loads(f.read())
-        status, msg = sg.send(sendgrid.Mail(to=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
+        status, msg = sg.send(sendgrid.Mail(bcc=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
                                             from_email="button@cstevens.me", text="""
 The button has gone down to {} seconds! See the stats at {}.
 
@@ -233,7 +233,7 @@ Want to get notified when new milestones are achieved? Click [here](http://butto
                     button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
             with open(usersfile, "r") as f:
                 subscribers = loads(f.read())
-            status, msg = sg.send(sendgrid.Mail(to=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
+            status, msg = sg.send(sendgrid.Mail(bcc=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
                                                 from_email="button@cstevens.me", text="""
 The button has passed {} clicks! See the stats at {}.
 
