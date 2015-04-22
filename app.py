@@ -109,6 +109,8 @@ def flair_data():
             data = loads(f.read())
             button_data["flairs"] = data["colours"]
             button_data["flairs_number"] = data["counts"]
+            button_data["calc_flairs"] = data["calc_flairs"]
+            button_data["current_calc_flair"] = data["current_calc_flairs"]
         with open(currentflairfile, "r") as f:
             button_data["current_flair"] = loads(f.read())
         sleep(150)
