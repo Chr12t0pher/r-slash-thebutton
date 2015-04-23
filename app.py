@@ -273,7 +273,10 @@ def reddit_sub_unsub():
 
 @app.route("/")
 def home():
-    return render_template("home.html", data=button_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+    max_date = datetime.date(2015, 4, 1) + datetime.timedelta(int((button_data["clicks"]["all"] * 59) / 86400))
+    max_date = datetime.datetime.strftime(max_date, "%d %b %Y")
+    return render_template("home.html", data=button_data, max_date=max_date,
+                           time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/times")

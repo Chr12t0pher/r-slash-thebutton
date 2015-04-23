@@ -49,12 +49,13 @@
                 <li><span style="color: #E59500">Orange</span>: {{ data["flairs"]["orange"] }} ({{ data["current_flair"]["orange"] }}%)</li>
                 <li><span style="color: #E50000">Red</span>: {{ data["flairs"]["red"] }} ({{ data["current_flair"]["red"] }}%)</li>
             </ul>
-            <small>This data provided by /u/lovethebacon.<br>Only users who have commented are counted.<br>Updated every 2 minutes.</small>
+            <small>Via /u/lovethebacon.<br>Only users who have commented are counted.</small>
         </div>
 
         <div class="col-lg-6">
             <h4>Click Flair Breakdown</h4>
             <ul>
+                <div style="height:40px"></div>
                 <li><span style="color: #820080">Purple</span>: {{ data["calc_flairs"]["purple"] }} ({{ data["current_calc_flair"]["purple"] }}%)</li>
                 <li><span style="color: #0083C7">Blue</span>: {{ data["calc_flairs"]["blue"] }} ({{ data["current_calc_flair"]["blue"] }}%)</li>
                 <li><span style="color: #02BE01">Green</span>: {{ data["calc_flairs"]["green"] }} ({{ data["current_calc_flair"]["green"] }}%)</li>
@@ -62,20 +63,21 @@
                 <li><span style="color: #E59500">Orange</span>: {{ data["calc_flairs"]["orange"] }} ({{ data["current_calc_flair"]["orange"] }}%)</li>
                 <li><span style="color: #E50000">Red</span>: {{ data["calc_flairs"]["red"] }} ({{ data["current_calc_flair"]["red"] }}%)</li>
             </ul>
-            <small>This data provided by /u/OutOfBrain.<br>All clicks since 04 Apr are included.<br>Updated every 5 minutes.</small>
+            <small>Via /u/OutOfBrain.<br>Only clicks since 04 Apr are included.</small>
         </div>
     </div>
+
+    <hr/>
 
     <div class="row">
         <div class="col-lg-6">
             <h4>Lowest Time (Overall)</h4>
             <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds on <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
+        </div>
 
-            <h4>Lowest Time History</h4>
-            <p>Click <strong><a href="/times" target="_blank">here</a></strong> to view history.</p>
-
-            <h4>Suggestions</h4>
-            <p>Got an idea for another statistic to show? Message <strong>Chr12t0pher</strong> on reddit!</p><br>
+        <div class="col-lg-6">
+            <h4>Longest Possible Time</h4>
+            <p>If pressed at 1 second each click, the timer would still be going on <b>{{ max_date }}</b>.</p>
         </div>
     </div>
 {% endblock %}
