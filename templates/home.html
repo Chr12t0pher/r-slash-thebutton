@@ -7,30 +7,30 @@
     <div class="row">
         <div class="col-lg-6">
             <h4>Clicks Per Second (Overall)</h4>
-            <p><strong>{{ data["clicks_second"]["all"] }}</strong> clicks /sec</p>
+            <p><strong>{{ data["clicks_per_second"]["all"] }}</strong> clicks /sec</p>
 
             <h4>Clicks Per Second (Past 1m)</h4>
-            <p><strong>{{ data["clicks_second"]["1m"] }}</strong> clicks  /sec</p>
+            <p><strong>{{ data["clicks_per_second"]["1m"] }}</strong> clicks  /sec</p>
 
             <h4>Clicks Per Second (Past 10m)</h4>
-            <p><strong>{{ data["clicks_second"]["10m"] }}</strong> clicks /sec</p>
+            <p><strong>{{ data["clicks_per_second"]["10m"] }}</strong> clicks /sec</p>
 
             <h4>Clicks Per Second (Past 60m)</h4>
-            <p><strong>{{ data["clicks_second"]["60m"] }}</strong> clicks /sec</p>
+            <p><strong>{{ data["clicks_per_second"]["60m"] }}</strong> clicks /sec</p>
         </div>
 
         <div class="col-lg-6">
             <h4>Number of Clicks (Overall)</h4>
-            <p><strong>{{ data["clicks"]["all"] }}</strong> clicks</p>
+            <p><strong>{{ data["total_clicks"]["all"] }}</strong> clicks</p>
 
             <h4>Number of Clicks (Past 1m)</h4>
-            <p><strong>{{ data["clicks"]["1m"] }}</strong> clicks</p>
+            <p><strong>{{ data["total_clicks"]["1m"] }}</strong> clicks</p>
 
             <h4>Number of Clicks (Past 10m)</h4>
-            <p><strong>{{ data["clicks"]["10m"] }}</strong> clicks</p>
+            <p><strong>{{ data["total_clicks"]["10m"] }}</strong> clicks</p>
 
             <h4>Number of Clicks (Past 60m)</h4>
-            <p><strong>{{ data["clicks"]["60m"] }}</strong> clicks</p>
+            <p><strong>{{ data["total_clicks"]["60m"] }}</strong> clicks</p>
         </div>
     </div>
 
@@ -38,32 +38,16 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h4>Subreddit Flair Breakdown</h4>
+            <h4>Flair Breakdown</h4>
             <ul>
-                <li>Can't Press: {{ data["flairs"]["cant"] }} ({{ data["current_flair"]["cant"] }}%)</li>
-                <li><span style="color: #888">Grey</span>: {{ data["flairs"]["grey"] }} ({{ data["current_flair"]["grey"] }}%)</li>
-                <li><span style="color: #820080">Purple</span>: {{ data["flairs"]["purple"] }} ({{ data["current_flair"]["purple"] }}%)</li>
-                <li><span style="color: #0083C7">Blue</span>: {{ data["flairs"]["blue"] }} ({{ data["current_flair"]["blue"] }}%)</li>
-                <li><span style="color: #02BE01">Green</span>: {{ data["flairs"]["green"] }} ({{ data["current_flair"]["green"] }}%)</li>
-                <li><span style="color: #E5D900">Yellow</span>: {{ data["flairs"]["yellow"] }} ({{ data["current_flair"]["yellow"] }}%)</li>
-                <li><span style="color: #E59500">Orange</span>: {{ data["flairs"]["orange"] }} ({{ data["current_flair"]["orange"] }}%)</li>
-                <li><span style="color: #E50000">Red</span>: {{ data["flairs"]["red"] }} ({{ data["current_flair"]["red"] }}%)</li>
+                <li><span style="color: #820080">Purple</span>: {{ data["subreddit_flair"]["colour"]["purple"] }} ({{ data["subreddit_flair"]["colour_percentage"]["purple"] }}%)</li>
+                <li><span style="color: #0083C7">Blue</span>: {{ data["subreddit_flair"]["colour"]["blue"] }} ({{ data["subreddit_flair"]["colour_percentage"]["blue"] }}%)</li>
+                <li><span style="color: #02BE01">Green</span>: {{ data["subreddit_flair"]["colour"]["green"] }} ({{ data["subreddit_flair"]["colour_percentage"]["green"] }}%)</li>
+                <li><span style="color: #E5D900">Yellow</span>: {{ data["subreddit_flair"]["colour"]["yellow"] }} ({{ data["subreddit_flair"]["colour_percentage"]["yellow"] }}%)</li>
+                <li><span style="color: #E59500">Orange</span>: {{ data["subreddit_flair"]["colour"]["orange"] }} ({{ data["subreddit_flair"]["colour_percentage"]["orange"] }}%)</li>
+                <li><span style="color: #E50000">Red</span>: {{ data["subreddit_flair"]["colour"]["red"] }} ({{ data["subreddit_flair"]["colour_percentage"]["red"] }}%)</li>
             </ul>
-            <small>Via /u/lovethebacon.<br>Only users who have commented are counted.</small>
-        </div>
-
-        <div class="col-lg-6">
-            <h4>Click Flair Breakdown</h4>
-            <ul>
-                <div style="height:40px"></div>
-                <li><span style="color: #820080">Purple</span>: {{ data["calc_flairs"]["purple"] }} ({{ data["current_calc_flair"]["purple"] }}%)</li>
-                <li><span style="color: #0083C7">Blue</span>: {{ data["calc_flairs"]["blue"] }} ({{ data["current_calc_flair"]["blue"] }}%)</li>
-                <li><span style="color: #02BE01">Green</span>: {{ data["calc_flairs"]["green"] }} ({{ data["current_calc_flair"]["green"] }}%)</li>
-                <li><span style="color: #E5D900">Yellow</span>: {{ data["calc_flairs"]["yellow"] }} ({{ data["current_calc_flair"]["yellow"] }}%)</li>
-                <li><span style="color: #E59500">Orange</span>: {{ data["calc_flairs"]["orange"] }} ({{ data["current_calc_flair"]["orange"] }}%)</li>
-                <li><span style="color: #E50000">Red</span>: {{ data["calc_flairs"]["red"] }} ({{ data["current_calc_flair"]["red"] }}%)</li>
-            </ul>
-            <small>Via /u/OutOfBrain.<br>Only clicks since 04 Apr are included.</small>
+            <small>Via /u/OutOfBrain.<br>All clicks since 04 Apr are included.</small>
         </div>
     </div>
 
@@ -72,12 +56,12 @@
     <div class="row">
         <div class="col-lg-6">
             <h4>Lowest Time (Overall)</h4>
-            <p><strong>{{ data["lowestTime"]["all"]["clicks"] }}</strong> seconds on <strong>{{ data["lowestTime"]["all"]["time"] }}</strong> UTC</p>
+            <p><strong>{{ data["lowest_click"]["click"] }}</strong> seconds on <strong>{{ data["lowest_click"]["time"] }}</strong> UTC</p>
         </div>
 
         <div class="col-lg-6">
             <h4>Longest Possible Time</h4>
-            <p>If pressed at 1 second each click, the timer would still be going on <b>{{ max_date }}</b>.</p>
+            <p>If each click was at 1 second, the timer would still be going at <b>{{ data["max_date"] }}</b>.</p>
         </div>
     </div>
 {% endblock %}
@@ -85,7 +69,7 @@
 {% block js %}
     <script> // Popover enabled.
     $(function () {
-        $('[data-toggle="popover"]').popover()
+        $("[data-toggle='popover']").popover()
     })
     </script>
     <script> // Random coloured button.
