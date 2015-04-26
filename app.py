@@ -16,7 +16,7 @@ import app_templates
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
-bot = praw.Reddit(user_agent="[V2 alpha] button.cstevens.me (via /u/Chr12t0pher)")
+bot = praw.Reddit(user_agent="[V2.0.0] button.cstevens.me (via /u/Chr12t0pher)")
 bot.login("TheButtonStatsBot", secret["reddit"])
 grid = sendgrid.SendGridClient("Chr12t0pher", secret["sendgrid"])
 
