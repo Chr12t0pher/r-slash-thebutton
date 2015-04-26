@@ -1,292 +1,268 @@
 from ws4py.client.threadedclient import WebSocketClient
 from ws4py.exc import HandshakeError
+import csv
 from ast import literal_eval
 import threading
 from flask import Flask, render_template, flash
 import datetime
 from json import loads, dumps
 from time import sleep
-from sys import platform
 import requests
 import praw
 from secret import secret
 from os import urandom
 import sendgrid
-
-bot = praw.Reddit(user_agent="/r/thebutton Stats Poster (contact /u/Chr12t0pher)")
-bot.login("TheButtonStatsBot", secret[0])
-sg = sendgrid.SendGridClient("Chr12t0pher", secret[1])
-
-if platform == "win32":  # If running locally.
-    lowestfile = "lowest.json"; flairfile = "flair.json"; currentflairfile = "currentflair.json";
-    historicfile = "historic.json"; milestonefile = "milestones.json"; usersfile = "users.json"
-else:  # If running in production.
-    lowestfile = "/home/www/lowest.json"; flairfile = "/home/www/flair.json";
-    currentflairfile = "/home/www/currentflair.json"; historicfile = "/home/www/historic.json";
-    milestonefile = "/home/www/milestones.json"; usersfile = "/home/www/users.json"
-
-starttime = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
-
-with open(lowestfile, "r") as f:
-    button_data = {"lowestTime": {"1m": 0, "10m": 0, "60m": 0, "all": loads(f.read())},
-                   "clicks_second": {"1m": 0, "10m": 0, "60m": 0, "all": 0},
-                   "clicks": {"1m": 0, "10m": 0, "60m": 0, "all": 0}}
-
-with open(flairfile, "r") as f:
-    button_data["flairs"] = loads(f.read())
-
-with open(currentflairfile, "r") as f:
-    button_data["current_flair"] = loads(f.read())
-
-with open(historicfile, "r") as f:
-    historic_data = loads(f.read())
+import app_templates
 
 app = Flask(__name__)
 app.secret_key = urandom(24)
+bot = praw.Reddit(user_agent="[V2 alpha] button.cstevens.me (via /u/Chr12t0pher)")
+bot.login("TheButtonStatsBot", secret["reddit"])
+grid = sendgrid.SendGridClient("Chr12t0pher", secret["sendgrid"])
 
 
-def socket_controller():
-    global button_data
-
-    class Socket(WebSocketClient):
-        def received_message(self, message):
-            message_dict = literal_eval(str(message))["payload"]
-            if message_dict["seconds_left"] < button_data["lowestTime"]["all"]["clicks"]:
-                historic_data["lowestTime"][str(int(message_dict["seconds_left"]))] =  \
-                    datetime.datetime.utcnow().strftime("%d %b ") + message_dict["now_str"][-8:].replace("-", ":")
-                button_data["lowestTime"]["all"]["clicks"] = int(message_dict["seconds_left"])
-                button_data["lowestTime"]["all"]["time"] = datetime.datetime.utcnow().strftime("%d %b ") + \
-                                                           message_dict["now_str"][-8:].replace("-", ":")
-                with open(lowestfile, "w") as f:
-                    f.write(dumps(button_data["lowestTime"]["all"]))
-                threading.Thread(target=reddit_low, args=(button_data["lowestTime"]["all"]["clicks"],)).start()
-            button_data["clicks"]["all"] = int(message_dict["participants_text"].replace(",", ""))
-
-    while True:
-        def new_socket_url():
-            return requests.get("http://reddit.com/r/thebutton",
-                                headers={"User-Agent": "/r/thebutton websocket url scraper (/u/Chr12t0pher)"}
-                                ).text.split('_websocket": "')[1].split('", ')[0]
-        try:
-            socket = Socket(new_socket_url())
-            socket.connect()
-            socket.run_forever()
-        except HandshakeError:
-            continue
+class Socket(WebSocketClient):
+    def received_message(self, message):
+        message = literal_eval(str(message))["payload"]
+        if message["seconds_left"] < Data.lowest_click["click"]:  # Check for new low.
+            Data.lowest_click_times[str(int(message["seconds_left"]))] = \
+                datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
+            Data.lowest_click["click"] = int(message["seconds_left"])
+            Data.lowest_click["time"] = \
+                datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
+            #  Start milestone click watcher.
+            threading.Thread(target=Data.milestone_low_watcher, args=(int(message["seconds_left"]), )).start()
+        Data.total_clicks["all"] = int(message["participants_text"].replace(",", ""))
 
 
-def calculate_averages():
-    while True:
-        button_data["clicks_second"]["all"] = round((button_data["clicks"]["all"] / (datetime.datetime.today() -
-                                                     datetime.datetime(2015, 4, 1, 17, 00, 00)).total_seconds()), 3)
-        if len(historic_data["click_count"]) >= 12:
-            button_data["clicks_second"]["1m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-12]) / float(60), 3)
-            button_data["clicks"]["1m"] = historic_data["click_count"][-1] - historic_data["click_count"][-12]
-        if len(historic_data["click_count"]) >= 120:
-            button_data["clicks_second"]["10m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-120]) / float(600), 3)
-            button_data["clicks"]["10m"] = historic_data["click_count"][-1] - historic_data["click_count"][-120]
-        if len(historic_data["click_count"]) == 720:
-            button_data["clicks_second"]["60m"] = round((historic_data["click_count"][-1] - historic_data["click_count"][-720]) / float(3600), 3)
-            button_data["clicks"]["60m"] = historic_data["click_count"][-1] - historic_data["click_count"][-720]
-        sleep(5)
+class ButtonStats:
+    with open("data.json", "r") as f:
+        data = loads(f.read())
+        lowest_click = data["lowest_click"]
+        lowest_click_times = data["lowest_click_times"]
+        clicks_per_second = data["clicks_per_second"]
+        total_clicks = data["total_clicks"]
+        subreddit_flair = data["subreddit_flair"]
+        max_date = data["max_date"]
+        historic = data["historic"]
+        milestones = data["milestones"]
+        subscriptions_email = data["subscriptions"]["email"]
+        subscriptions_reddit = data["subscriptions"]["reddit"]
+        subscriptions_reddit_last_msg = data["subscriptions"]["reddit_last_msg"]
 
+    def save_json(self):
+        print("SAVING")
+        data = {"lowest_click": self.lowest_click,
+                "lowest_click_times": self.lowest_click_times,
+                "clicks_per_second": self.clicks_per_second,
+                "total_clicks": self.total_clicks,
+                "subreddit_flair": self.subreddit_flair,
+                "max_date": self.max_date,
+                "historic": self.historic,
+                "milestones": self.milestones,
+                "subscriptions": {"email": self.subscriptions_email,
+                                  "reddit": self.subscriptions_reddit,
+                                  "reddit_last_msg": self.subscriptions_reddit_last_msg}
+                }
+        with open("data.json", "w") as f:
+            f.write(dumps(data))
 
-def historic_append():
-    sleep(10)
-    while True:
-        historic_data["click_count"].append(button_data["clicks"]["all"])
-        if len(historic_data["click_count"]) > 720:
-            historic_data["click_count"].pop(0)
-        with open(historicfile, "w") as f:
-            f.write(dumps(historic_data))
-        sleep(5)
+    def generate_json(self):
+        data = {"lowest_click": self.lowest_click,
+                "lowest_click_times": self.lowest_click_times,
+                "clicks_per_second": self.clicks_per_second,
+                "total_clicks": self.total_clicks,
+                "subreddit_flair": self.subreddit_flair,
+                "max_date": self.max_date}
+        return data
 
+    def scheduler(self):
+        seconds = 0
+        self._update_counts()
+        self._update_flair()
+        self._reddit_subscriptions()
+        while True:
+            self._update_counts()
+            if seconds == 60 or seconds == 120:
+                self._update_flair()
+                self.save_json()
+            elif seconds == 120:
+                self._reddit_subscriptions()
+                seconds = 0
+            seconds += 1
+            sleep(1)
 
-def flair_data():
-    sleep(10)
-    while True:
-        with open(flairfile, "r") as f:
-            data = loads(f.read())
-            button_data["flairs"] = data["colours"]
-            button_data["flairs_number"] = data["counts"]
-            button_data["calc_flairs"] = data["calc_flairs"]
-            button_data["current_calc_flair"] = data["current_calc_flairs"]
-        with open(currentflairfile, "r") as f:
-            button_data["current_flair"] = loads(f.read())
-        sleep(150)
+    def milestone_low_watcher(self, second):
+        sleep(10)
+        if second == self.lowest_click["click"]:
+            self._milestone_low()
 
+    def milestone_clicks_watcher(self):
+        if self.total_clicks["all"] >= self.milestones[0]:
+            threading.Thread(target=self._milestone_clicks()).start()
 
-def reddit_low(start_time):
-    sleep(10)
-    if start_time == button_data["lowestTime"]["all"]["clicks"]:
+    def socket_controller(self):
+        while True:
+            def socket_url():
+                return requests.get("http://reddit.com/r/thebutton",
+                                    headers={"User-Agent": "I'm grabbing the websocket URL for /u/Chr12t0pher"}
+                                    ).text.split('_websocket": "')[1].split('", ')[0]
+            try:
+                socket = Socket(socket_url())
+                socket.connect()
+                socket.run_forever()
+            except HandshakeError:
+                continue
+
+    def _update_counts(self):
+        """Run every 5 seconds."""
+
+        """Append click count to historic data, and remove unneeded data. Run every 5 seconds."""
+        self.historic.append(self.total_clicks["all"])
+        if len(self.historic) > 720:
+            self.historic.pop(0)
+
+        """Updates clicks_per_second & total_clicks."""
+        self.clicks_per_second["all"] = round((
+            self.total_clicks["all"] / (datetime.datetime.today() -
+                                        datetime.datetime(2015, 4, 1, 17, 0, 0)).total_seconds()), 3)
+        if len(self.historic) >= 12:  # 1 Minute Averages
+            self.clicks_per_second["1m"] = round((self.historic[-1] - self.historic[-12]) / float(60), 3)
+            self.total_clicks["1m"] = self.historic[-1] - self.historic[-12]
+        if len(self.historic) >= 120:  # 10 Minute Averages
+            self.clicks_per_second["10m"] = round((self.historic[-1] - self.historic[-120]) / float(600), 3)
+            self.total_clicks["10m"] = self.historic[-1] - self.historic[-120]
+        if len(self.historic) >= 720:  # 60 Minute Averages
+            self.clicks_per_second["60m"] = round((self.historic[-1] - self.historic[-720]) / float(3600), 3)
+            self.total_clicks["60m"] = self.historic[-1] - self.historic[-720]
+
+        """Calculate max duration of timer."""
+        calc_max_date = datetime.date(2015, 4, 1) + datetime.timedelta(int((self.total_clicks["all"] * 59) / 86400))
+        self.max_date = datetime.datetime.strftime(calc_max_date, "%d %b %Y")
+
+    def _update_flair(self):
+        """Gets latest flair data and runs calculations. Run every 1 minute."""
+        request_data = requests.get("http://tcial.org/the-button/button_clicks.csv").content.decode().split("\n")
+        request_data.pop(0)  # First row is the headings.
+        request_data.pop(-1)  # Last row is empty.
+
+        flair_data = {"time": {}, "colour": {"red": 0, "orange": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0},
+                      "colour_percentage": {"red": 0, "orange": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}}
+        for i in range(0, 61):  # Generate colours dictionary.
+            flair_data["time"][str(i)] = 0
+        for row in csv.reader(request_data):  # Read CSV file into each timer number.
+            if row[0] != "1429984547":  # Ignore dodgy row in data with -824253 0 second clicks :3
+                flair_data["time"][row[2]] += int(row[1])
+
+        for time in flair_data["time"]:  # Add each times count to it's flair colour.
+            if 60 >= int(time) > 51:
+                flair_data["colour"]["purple"] += flair_data["time"][time]
+            elif 51 >= int(time) > 41:
+                flair_data["colour"]["blue"] += flair_data["time"][time]
+            elif 41 >= int(time) > 31:
+                flair_data["colour"]["green"] += flair_data["time"][time]
+            elif 31 >= int(time) > 21:
+                flair_data["colour"]["yellow"] += flair_data["time"][time]
+            elif 21 >= int(time) > 11:
+                flair_data["colour"]["orange"] += flair_data["time"][time]
+            elif 11 >= int(time) > 0:
+                flair_data["colour"]["red"] += flair_data["time"][time]
+
+        for flair in flair_data["colour"]:
+            flair_data["colour_percentage"][flair] = round(
+                float((flair_data["colour"][flair] / sum(flair_data["time"].values())) * 100), 2)
+
+        self.subreddit_flair = flair_data
+
+    def _reddit_subscriptions(self):
+        """Checks for users subscribing or unsubscribing to reddit pm notifications. Run every 2 minutes."""
+        messages = bot.get_messages(limit=None, place_holder=self.subscriptions_reddit_last_msg)
+        first = True
+        for message in messages:
+            # if message.body == "!subscribe" and message.author.name not in self.subscriptions_reddit:
+                # self.subscriptions_reddit.append(message.author.name)
+            if message.body == "!unsubscribe" and message.author.name in self.subscriptions_reddit:
+                self.subscriptions_reddit.pop(self.subscriptions_reddit.index(message.author.name))
+            if first is True:
+                self.subscriptions_reddit_last_msg = message.id
+                first = False
+
+    def _milestone_low(self):
+        """Post reddit thread and update users via email/reddit pm of a new low time."""
         post = bot.submit("thebutton",
                           "Just now, at {} UTC, the button went down to {} seconds.".format(
-                              button_data["lowestTime"]["all"]["time"], button_data["lowestTime"]["all"]["clicks"]),
-                          text="""
-#Button Statistics at {} UTC
+                              self.lowest_click["time"], self.lowest_click["click"]),
+                          text=app_templates.reddit_post.format(
+                              self.clicks_per_second["all"], self.total_clicks["all"],
+                              self.clicks_per_second["1m"], self.total_clicks["1m"],
+                              self.clicks_per_second["10m"], self.total_clicks["10m"],
+                              self.clicks_per_second["60m"], self.total_clicks["60m"],
 
-Clicks Per Second | Time Frame | Number Of Clicks
------------------|:----------:|------------:
-{} | _Overall_ | {}
-{} | _Past 01m_ | {}
-{} | _Past 10m_ | {}
-{} | _Past 60m_ | {}
+                              self.subreddit_flair["colour"]["purple"], self.subreddit_flair["colour_percentage"]["purple"],
+                              self.subreddit_flair["colour"]["blue"], self.subreddit_flair["colour_percentage"]["blue"],
+                              self.subreddit_flair["colour"]["green"], self.subreddit_flair["colour_percentage"]["green"],
+                              self.subreddit_flair["colour"]["yellow"], self.subreddit_flair["colour_percentage"]["yellow"],
+                              self.subreddit_flair["colour"]["orange"], self.subreddit_flair["colour_percentage"]["orange"],
+                              self.subreddit_flair["colour"]["red"], self.subreddit_flair["colour_percentage"]["red"],
 
-Flair Colour | Count no. | Count %
-------------|---------|-------
-Purple | {} | {}
-Blue | {} | {}
-Green | {} | {}
-Yellow | {} | {}
-Orange | {} | {}
-Red | {} | {}
+                              self.lowest_click["click"], self.lowest_click["time"]))
 
->### Lowest time reached at the time of posting
->__{}__ at {} UTC
+        grid.send(sendgrid.Mail(bcc=self.subscriptions_email, subject="[/r/thebutton stats] New low time!",
+                                from_email="button@cstevens.me",
+                                text=app_templates.email_low.format(self.lowest_click["click"],
+                                                                       post.url.replace("www", "np"))))
+        for user in self.subscriptions_reddit:
+            bot.send_message(user, "[/r/thebutton stats] New low time!", app_templates.reddit_low.format(
+                self.lowest_click["click"], post.url.replace("www", "np")))
+            sleep(2)
 
+    def _milestone_clicks(self):
+        """Post reddit thread and update users via email/reddit pm of a particpant milestone."""
+        milestone = self.milestones[0]
+        self.milestones.pop(0)
+        post = bot.submit("thebutton",
+                          "Just now, at {} UTC, the button surpassed {} clicks.".format(
+                              datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestone),
+                          text=app_templates.reddit_post.format(
+                              self.clicks_per_second["all"], self.total_clicks["all"],
+                              self.clicks_per_second["1m"], self.total_clicks["1m"],
+                              self.clicks_per_second["10m"], self.total_clicks["10m"],
+                              self.clicks_per_second["60m"], self.total_clicks["60m"],
 
-Want to get notified when new milestones are achieved? Click [here](http://button.cstevens.me/notify) for email alerts.
+                              self.subreddit_flair["colour"]["purple"], self.subreddit_flair["colour_percentage"]["purple"],
+                              self.subreddit_flair["colour"]["blue"], self.subreddit_flair["colour_percentage"]["blue"],
+                              self.subreddit_flair["colour"]["green"], self.subreddit_flair["colour_percentage"]["green"],
+                              self.subreddit_flair["colour"]["yellow"], self.subreddit_flair["colour_percentage"]["yellow"],
+                              self.subreddit_flair["colour"]["orange"], self.subreddit_flair["colour_percentage"]["orange"],
+                              self.subreddit_flair["colour"]["red"], self.subreddit_flair["colour_percentage"]["red"],
 
-
-^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
-
-^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://button.cstevens.me/)
-""".format(datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
-                    button_data["clicks_second"]["all"], button_data["clicks"]["all"],
-                    button_data["clicks_second"]["1m"], button_data["clicks"]["1m"],
-                    button_data["clicks_second"]["10m"], button_data["clicks"]["10m"],
-                    button_data["clicks_second"]["60m"], button_data["clicks"]["60m"],
-
-                    button_data["flairs"]["purple"], button_data["current_flair"]["purple"],
-                    button_data["flairs"]["blue"], button_data["current_flair"]["blue"],
-                    button_data["flairs"]["green"], button_data["current_flair"]["green"],
-                    button_data["flairs"]["yellow"], button_data["current_flair"]["yellow"],
-                    button_data["flairs"]["orange"], button_data["current_flair"]["orange"],
-                    button_data["flairs"]["red"], button_data["current_flair"]["red"],
-
-                    button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
-        with open(usersfile, "r") as f:
-            subscribers = loads(f.read())
-        status, msg = sg.send(sendgrid.Mail(bcc=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
-                                            from_email="button@cstevens.me", text="""
-The button has gone down to {} seconds! See the stats at {}.
-
-To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(button_data["lowestTime"]["all"]["clicks"], post.url.replace("www", "np"))))
-        for user in subscribers["users"]:
-            bot.send_message(user, "[/r/thebutton stats] New low time!", """
-The button has gone down to {} seconds! Click [here]({}) to view the stats.
-
-To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
-""".format(button_data["lowestTime"]["all"]["clicks"], post.url.replace("www", "np")))
+                              self.lowest_click["click"], self.lowest_click["time"]))
+        grid.send(sendgrid.Mail(bcc=self.subscriptions_email, subject="[/r/thebutton stats] New participant milestone!",
+                                from_email="button@cstevens.me",
+                                text=app_templates.email_clicks.format(milestone,
+                                                                       post.url.replace("www", "np"))))
+        for user in self.subscriptions_reddit:
+            bot.send_message(user, "[/r/thebutton stats] New participant milestone!", app_templates.reddit_clicks.format(
+                self.milestone, post.url.replace("www", "np")))
             sleep(2)
 
 
-def reddit_milestone():
-    with open(milestonefile, "r") as f:
-        milestones = loads(f.read())
-    sleep(30)
-    while True:
-        if int(button_data["clicks"]["all"]) >= milestones[0]:
-            post = bot.submit("thebutton",
-                              "Just now, at {} UTC, the button surpassed {} clicks.".format(
-                                  datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestones[0]),
-                              text="""
-#Button Statistics at {} UTC
-
-Clicks Per Second | Time Frame | Number Of Clicks
------------------|:----------:|------------:
-{} | _Overall_ | {}
-{} | _Past 01m_ | {}
-{} | _Past 10m_ | {}
-{} | _Past 60m_ | {}
-
-Flair Colour | Count no. | Count %
-------------|---------|-------
-Purple | {} | {}
-Blue | {} | {}
-Green | {} | {}
-Yellow | {} | {}
-Orange | {} | {}
-Red | {} | {}
-
->### Lowest time reached at the time of posting
->__{}__ at {} UTC
-
-
-Want to get notified when new milestones are achieved? Click [here](http://button.cstevens.me/notify) for email alerts.
-
-
-^_I_ ^_am_ ^_a_ ^_bot._ ^_Contact_ ^_/u/Chr12t0pher_ ^_with_ ^_comments/complaints._
-
-^_Uses_ ^_data_ ^_from_ [^_/r/thebutton_ ^_stats_](http://button.cstevens.me/)
-""".format(datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
-                    button_data["clicks_second"]["all"], button_data["clicks"]["all"],
-                    button_data["clicks_second"]["1m"], button_data["clicks"]["1m"],
-                    button_data["clicks_second"]["10m"], button_data["clicks"]["10m"],
-                    button_data["clicks_second"]["60m"], button_data["clicks"]["60m"],
-
-                    button_data["flairs"]["purple"], button_data["current_flair"]["purple"],
-                    button_data["flairs"]["blue"], button_data["current_flair"]["blue"],
-                    button_data["flairs"]["green"], button_data["current_flair"]["green"],
-                    button_data["flairs"]["yellow"], button_data["current_flair"]["yellow"],
-                    button_data["flairs"]["orange"], button_data["current_flair"]["orange"],
-                    button_data["flairs"]["red"], button_data["current_flair"]["red"],
-
-                    button_data["lowestTime"]["all"]["clicks"], button_data["lowestTime"]["all"]["time"]))
-            with open(usersfile, "r") as f:
-                subscribers = loads(f.read())
-            status, msg = sg.send(sendgrid.Mail(bcc=subscribers["emails"], subject="[/r/thebutton stats] New low time!",
-                                                from_email="button@cstevens.me", text="""
-The button has passed {} clicks! See the stats at {}.
-
-To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.""".format(milestones[0], post.url.replace("www", "np"))))
-            for user in subscribers["users"]:
-                bot.send_message(user, "[/r/thebutton stats] New low time!", """
-The button has passed {} clicks! Click [here]({}) to view the stats.
-
-To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
-""".format(milestones[0], post.url.replace("www", "np")))
-                sleep(2)
-            milestones.pop(0)
-            with open(milestonefile, "w") as f:
-                f.write(dumps(milestones))
-            sleep(5)
-        sleep(5)
-
-
-def reddit_sub_unsub():
-    sleep(10)
-    with open(usersfile, "r") as f:
-        subscribers = loads(f.read())
-    while True:
-        messages = bot.get_messages(limit=None, place_holder=subscribers["last"])
-        for message in messages:
-            #if message.body == "!subscribe" and message.author.name not in subscribers["users"]:
-                #subscribers["users"].append(message.author.name)
-            if message.body == "!unsubscribe" and message.author.name in subscribers["users"]:
-                subscribers["users"].pop(subscribers["users"].index(message.author.name))
-            subscribers["last"] = message.id
-        with open(usersfile, "w") as f:
-            f.write(dumps(subscribers))
-        sleep(120)
+Data = ButtonStats()
 
 
 @app.route("/")
 def home():
-    max_date = datetime.date(2015, 4, 1) + datetime.timedelta(int((button_data["clicks"]["all"] * 59) / 86400))
-    max_date = datetime.datetime.strftime(max_date, "%d %b %Y")
-    return render_template("home.html", data=button_data, max_date=max_date,
-                           time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+    return render_template("home.html", data=Data.generate_json(), time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/times")
 def times():
-    return render_template("times.html", data=historic_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+    return render_template("times.html", data=Data.generate_json(), time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/flairs")
 def flairs():
-    return render_template("flairs.html", data=button_data, time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
+    return render_template("flairs.html", data=Data.generate_json(), time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
 @app.route("/graphs")
@@ -306,16 +282,12 @@ def notify():
 
 @app.route("/notify/<email>")
 def notify_sub_unsub(email):
-    with open(usersfile, "r") as f:
-        users = loads(f.read())
-    if email in users["emails"]:
-        users["emails"].pop(users["emails"].index(email))
+    if email in Data.subscriptions_email:
+        Data.subscriptions_email.pop(Data.subscriptions_email.index(email))
         flash("You have successfully unsubscribed!", "success")
     else:
-        users["emails"].append(email)
+        Data.subscriptions_email.append(email)
         flash("You have successfully subscribed!", "success")
-    with open(usersfile, "w") as f:
-        f.write(dumps(users))
     return render_template("notify.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
@@ -324,17 +296,7 @@ def donate():
     return render_template("donate.html", time=datetime.datetime.utcnow().strftime("%H:%M:%S"))
 
 
-@app.route("/json")
-def json():
-    json_data = button_data
-    json_data["generated_at"] = datetime.datetime.utcnow().strftime("%H:%M:%S")
-    return dumps(json_data)
-
-if __name__ == "__main__":
-    threading.Thread(target=socket_controller).start()
-    threading.Thread(target=historic_append).start()
-    threading.Thread(target=calculate_averages).start()
-    threading.Thread(target=flair_data).start()
-    threading.Thread(target=reddit_milestone).start()
-    threading.Thread(target=reddit_sub_unsub).start()
+if __name__ == '__main__':
+    threading.Thread(target=Data.socket_controller).start()
+    threading.Thread(target=Data.scheduler).start()
     app.run(debug=True, use_reloader=False, threaded=True)

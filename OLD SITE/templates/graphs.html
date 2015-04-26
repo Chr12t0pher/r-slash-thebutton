@@ -1,0 +1,155 @@
+{% extends "template.html" %}
+{% set active = "graphs" %}
+
+{% block title %}Graphs{% endblock %}
+
+{% block main %}
+    <div class="alert alert-warning"><b>Warning</b>: The graphs page is in beta. Suggest charts and give feedback by messaging /u/Chr12t0pher.</div>
+
+    <div class="row">
+        <div class="well">
+            <div id="low-scatter"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="well">
+            <div id="time-dist-bar"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="well">
+            <img src="https://abra.me/static/blips_1h.png" style="width:100%"/>
+            <small>Chart by /u/mncke. See more <a href="http://abra.me/static/graphs.html" target="_blank">here</a>.</small>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="well">
+            <img src="https://abra.me/static/hist_all.png" style="width:100%"/>
+            <small>Chart by /u/mncke. See more <a href="http://abra.me/static/graphs.html" target="_blank">here</a>.</small>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script> // Random coloured button.
+    $(document).ready( function() {
+        var colours = ["purple", "blue", "green", "yellow", "orange", "red"];
+        $("#mainbutton").addClass("btn-material-" + colours[Math.floor(Math.random() * colours.length)]);
+    })
+    </script>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script> // Lowest Time Visualisation Chart
+    google.load('visualization', '1.1', {packages: ['corechart']});
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'Time');
+        data.addColumn('number', 'Second Reached');
+        data.addColumn({type: 'string', role: 'style'});
+        data.addRows([
+            [new Date(2015, 3, 3, 2, 53, 30),   55, '#820080'],
+            [new Date(2015, 3, 3, 2, 53, 31),   54, '#820080'],
+            [new Date(2015, 3, 3, 3, 19, 13),   53, '#820080'],
+            [new Date(2015, 3, 3, 3, 19, 14),   52, '#820080'],
+            [new Date(2015, 3, 3, 5, 50, 54),   51, '#0083C7'],
+            [new Date(2015, 3, 3, 6, 26, 13),   50, '#0083C7'],
+            [new Date(2015, 3, 3, 7, 47, 3),    49, '#0083C7'],
+            [new Date(2015, 3, 3, 8, 33, 33),   48, '#0083C7'],
+            [new Date(2015, 3, 3, 23, 9, 14),   47, '#0083C7'],
+            [new Date(2015, 3, 3, 23, 9, 15),   46, '#0083C7'],
+            [new Date(2015, 3, 3, 23, 9, 16),   45, '#0083C7'],
+            [new Date(2015, 3, 4, 2, 0, 21),    44, '#0083C7'],
+            [new Date(2015, 3, 4, 2, 25, 56),   43, '#0083C7'],
+            [new Date(2015, 3, 4, 5, 46, 1),    42, '#0083C7'],
+            [new Date(2015, 3, 4, 7, 19, 27),   41, '#02BE01'],
+            [new Date(2015, 3, 4, 8, 32, 15),   40, '#02BE01'],
+            [new Date(2015, 3, 4, 9, 9, 49),    39, '#02BE01'],
+            [new Date(2015, 3, 4, 9, 9, 50),    38, '#02BE01'],
+            [new Date(2015, 3, 4, 11, 21, 41),  37, '#02BE01'],
+            [new Date(2015, 3, 5, 8, 54, 2),    36, '#02BE01'],
+            [new Date(2015, 3, 5, 13, 3, 39),   35, '#02BE01'],
+            [new Date(2015, 3, 9, 8, 55, 9),    34, '#02BE01'],
+            [new Date(2015, 3, 9, 8, 55, 10),   33, '#02BE01'],
+            [new Date(2015, 3, 10, 6, 33, 26),  32, '#02BE01'],
+            [new Date(2015, 3, 10, 8, 1, 26),   31, '#E5D900'],
+            [new Date(2015, 3, 10, 9, 50, 4),   30, '#E5D900'],
+            [new Date(2015, 3, 11, 9, 58, 15),  29, '#E5D900'],
+            [new Date(2015, 3, 12, 9, 48, 0),   28, '#E5D900'],
+            [new Date(2015, 3, 12, 9, 48, 1),   27, '#E5D900'],
+            [new Date(2015, 3, 16, 10, 55, 40), 26, '#E5D900'],
+            [new Date(2015, 3, 17, 9, 47, 4),   25, '#E5D900'],
+            [new Date(2015, 3, 17, 21, 52, 17), 24, '#E5D900'],
+            [new Date(2015, 3, 17, 21, 52, 17), 23, '#E5D900'],
+            [new Date(2015, 3, 18, 8, 22, 16),  22, '#E5D900'],
+            [new Date(2015, 3, 18, 8, 54, 36),  21, '#E59500'],
+            [new Date(2015, 3, 19, 7, 39, 24),  20, '#E59500'],
+            [new Date(2015, 3, 19, 11, 35, 57), 19, '#E59500'],
+            [new Date(2015, 3, 20, 9, 41, 0),   18, '#E59500'],
+            [new Date(2015, 3, 21, 7, 53, 15),  17, '#E59500'],
+            [new Date(2015, 3, 21, 9, 8, 59),   16, '#E59500'],
+            [new Date(2015, 3, 21, 9, 38, 9),   15, '#E59500'],
+            [new Date(2015, 3, 22, 9, 28, 23),  14, '#E59500'],
+            [new Date(2015, 3, 24, 7, 23, 9),   13, '#E59500'],
+            [new Date(2015, 3, 24, 10, 25, 4),  12, '#E59500'],
+            [new Date(2015, 3, 24, 11, 18, 14), 11, '#E50000']
+          //[new Date(2015, 3, DD, H, MM, SS),  TT, '#Colour'],
+        ]);
+        var options = {
+            title: 'Lowest Time Visualisation',
+            vAxis: {minValue: 0},
+            height: 400,
+            pointSize: 5
+        };
+        var chart = new google.visualization.ScatterChart(document.getElementById('low-scatter'));
+        chart.draw(data, options);
+    }
+    </script>
+    <script> // Time Distribution Chart
+        google.load('visualization', '1.1', {packages: ['corechart', 'bar']});
+        google.setOnLoadCallback(drawBasic);
+
+        function drawBasic() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('timeofday', 'Time of Day (UTC)');
+            data.addColumn('number', 'Low Scores');
+
+            data.addRows([
+                [{v: [2, 0, 0], f: '2 am'},   4],
+                [{v: [3, 0, 0], f: '3 am'},   2],
+                [{v: [5, 0, 0], f:'5 am'},    2],
+                [{v: [6, 0, 0], f: '6 am'},   2],
+                [{v: [7, 0, 0], f: '7 am'},   5],
+                [{v: [8, 0, 0], f: '8 am'},   8],
+                [{v: [9, 0, 0], f: '9 am'},   11],
+                [{v: [10, 0, 0], f: '10 am'}, 2],
+                [{v: [11, 0, 0], f: '11 am'}, 3],
+                [{v: [13, 0, 0], f: '1 pm'},  1],
+                [{v: [21, 0, 0], f: '9 pm'},  2],
+                [{v: [23, 0, 0], f: '11 pm'}, 1]
+                //[{v: [hh, 0, 0], f:'hh xm'},  x],
+            ]);
+
+            var options = {
+                title: 'Time Distribution Of New Lows',
+                hAxis: {
+                    title: 'Time of Day',
+                    format: 'h:mm  a',
+                    viewWindow: {
+                        min: [0, 0, 0],
+                        max: [24, 0, 0]
+                    }
+                },
+                height: 400
+            };
+
+            var chart = new google.visualization.ColumnChart(
+                    document.getElementById('time-dist-bar'));
+
+            chart.draw(data, options);
+        }
+    </script>
+{% endblock %}

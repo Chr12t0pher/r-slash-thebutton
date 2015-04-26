@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Statistics for reddits 'the button'.">
+    <meta name="google-site-verification" content="U9szASir3zbItLnYIKpGzbvLonLP3KqckMqSb2E6D10" />
+
+    <title>{% block title %}{% endblock %} - /r/thebutton stats</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this templates -->
+    <link href="/static/css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="/static/css/roboto.min.css" rel="stylesheet">
+    <link href="/static/css/material.min.css" rel="stylesheet">
+    <link href="/static/css/ripples.min.css" rel="stylesheet">
+
+    <style type="text/css">.adslot {height: 90px; width: 728px;}</style>
+
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+<div class="container">
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li{% if active == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
+                <li{% if active == "times" %} class="active"{% endif %}><a href="/times">Times</a></li>
+                <li{% if active == "flairs" %} class="active"{% endif %}><a href="/flairs">Flairs</a></li>
+                <li{% if active == "graphs" %} class="active"{% endif %}><a href="/graphs">Graphs</a></li>
+                <li{% if active == "notify" %} class="active"{% endif %}><a href="/notify">Notify</a></li>
+                <li{% if active == "about" %} class="active"{% endif %}><a href="/about">About</a></li>
+                <li{% if active == "donate" %} class="active"{% endif %}><a href="/donate">Donate</a></li>
+            </ul>
+        </nav>
+        <h5 class="text-muted">Generated at {{ time }} UTC.</h5>
+    </div>
+    {% block jumbotron %}
+        <div class="jumbotron">
+            <h1>/r/thebutton statistics</h1>
+            <p class="lead">Lowest time reached, flair breakdowns, and more!</p>
+            <p><a class="btn btn-lg" id="mainbutton" href="http://www.reddit.com/r/thebutton" role="button" target="_blank">Visit the subreddit</a></p>
+        </div>
+    {% endblock %}
+    {% block main %}
+
+    {% endblock %}
+    {% block ad %}
+        <div class="ad-wrap">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- button stats -->
+        <ins class="adsbygoogle adslot hidden-xs"
+             style="display:inline-block"
+             data-ad-client="ca-pub-0334153774338665"
+             data-ad-slot="4271301333"
+             data-ad-format="horizontal"></ins>
+        <script>
+            window.onload = function() {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            };
+        </script>
+        </div>
+    {% endblock %}
+
+    <footer class="footer">
+        <small>Overall counts and the lowest time are updated once per second, flair breakdown every two minutes, all else every five seconds.</small>
+        <p><a href="https://github.com/Chr12t0pher/r-slash-thebutton">Source Code</a><a href="/about" class="pull-right">Contact Me</a></p>
+    </footer>
+</div> <!-- /container -->
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="/static/js/ripples.min.js"></script>
+<script src="/static/js/material.min.js"></script>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-41885449-6', 'auto');
+    ga('send', 'pageview');
+</script>
+<script>
+        $(document).ready(function () {
+            if ($(".ad-wrap").height() == 0) {
+                if ($(window).width() < 768) {}
+                else {
+                    var message = '<div class="alert alert-warning">Please consider disabling your adblocking software, as a 16 year old developer I can only keep the site running through ad revenue. Alternatively, please consider <a href="/donate" class="alert-link">donating</a>.</div>';
+                    $(message).insertAfter($(".jumbotron"));
+                }
+            }
+        })
+        </script>
+{% block js %}
+
+{% endblock %}
+
+</body>
+</html>
