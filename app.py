@@ -89,8 +89,8 @@ class ButtonStats:
             elif seconds == 120:
                 self._reddit_subscriptions()
                 seconds = 0
-            seconds += 1
-            sleep(1)
+            seconds += 5
+            sleep(5)
 
     def milestone_low_watcher(self, second):
         sleep(10)
