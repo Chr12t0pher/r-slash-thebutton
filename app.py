@@ -30,7 +30,7 @@ class Socket(WebSocketClient):
             Data.lowest_click["click"] = int(message["seconds_left"])
             Data.lowest_click["time"] = \
                 datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
-            #  Start milestone click watcher.
+            #  Start milestone low watcher.
             threading.Thread(target=Data.milestone_low_watcher, args=(int(message["seconds_left"]), )).start()
         Data.total_clicks["all"] = int(message["participants_text"].replace(",", ""))
 
@@ -51,7 +51,6 @@ class ButtonStats:
         subscriptions_reddit_last_msg = data["subscriptions"]["reddit_last_msg"]
 
     def save_json(self):
-        print("SAVING")
         data = {"lowest_click": self.lowest_click,
                 "lowest_click_times": self.lowest_click_times,
                 "clicks_per_second": self.clicks_per_second,
@@ -82,15 +81,20 @@ class ButtonStats:
         self._update_flair()
         self._reddit_subscriptions()
         while True:
-            self._update_counts()
-            if seconds == 60 or seconds == 120:
-                self._update_flair()
-                self.save_json()
-            elif seconds == 120:
-                self._reddit_subscriptions()
-                seconds = 0
-            seconds += 5
-            sleep(5)
+            try:
+                self._update_counts()
+                self.milestone_clicks_watcher()
+                if seconds == 60 or seconds == 120:
+                    self._update_flair()
+                    self.save_json()
+                elif seconds == 120:
+                    self._reddit_subscriptions()
+                    seconds = 0
+                seconds += 5
+                sleep(5)
+            except Exception as e:
+                print(e)
+                continue
 
     def milestone_low_watcher(self, second):
         sleep(10)
@@ -99,7 +103,7 @@ class ButtonStats:
 
     def milestone_clicks_watcher(self):
         if self.total_clicks["all"] >= self.milestones[0]:
-            threading.Thread(target=self._milestone_clicks()).start()
+            threading.Thread(target=self._milestone_clicks).start()
 
     def socket_controller(self):
         while True:
@@ -193,6 +197,8 @@ class ButtonStats:
                           "Just now, at {} UTC, the button went down to {} seconds.".format(
                               self.lowest_click["time"], self.lowest_click["click"]),
                           text=app_templates.reddit_post.format(
+                              self.lowest_click["time"],
+
                               self.clicks_per_second["all"], self.total_clicks["all"],
                               self.clicks_per_second["1m"], self.total_clicks["1m"],
                               self.clicks_per_second["10m"], self.total_clicks["10m"],
@@ -224,6 +230,8 @@ class ButtonStats:
                           "Just now, at {} UTC, the button surpassed {} clicks.".format(
                               datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"), milestone),
                           text=app_templates.reddit_post.format(
+                              datetime.datetime.utcnow().strftime("%d %b %H:%M:%S"),
+
                               self.clicks_per_second["all"], self.total_clicks["all"],
                               self.clicks_per_second["1m"], self.total_clicks["1m"],
                               self.clicks_per_second["10m"], self.total_clicks["10m"],
@@ -243,7 +251,7 @@ class ButtonStats:
                                                                        post.url.replace("www", "np"))))
         for user in self.subscriptions_reddit:
             bot.send_message(user, "[/r/thebutton stats] New participant milestone!", app_templates.reddit_clicks.format(
-                self.milestone, post.url.replace("www", "np")))
+                milestone, post.url.replace("www", "np")))
             sleep(2)
 
 
