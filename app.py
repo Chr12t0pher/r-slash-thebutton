@@ -84,10 +84,10 @@ class ButtonStats:
             try:
                 self._update_counts()
                 self.milestone_clicks_watcher()
-                if seconds == 60 or seconds == 120:
+                if seconds % 60 == 0:
                     self._update_flair()
                     self.save_json()
-                elif seconds == 120:
+                if seconds == 120:
                     self._reddit_subscriptions()
                     seconds = 0
                 seconds += 5
