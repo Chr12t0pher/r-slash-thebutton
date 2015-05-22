@@ -77,18 +77,18 @@ class ButtonStats:
 
     def scheduler(self):
         seconds = 0
-        self._update_counts()
-        self._update_flair()
-        self._reddit_subscriptions()
+        threading.Thread(target=self._update_counts).start()
+        threading.Thread(target=self._update_flair).start()
+        threading.Thread(target=self._reddit_subscriptions).start()
         while True:
             try:
-                self._update_counts()
-                self.milestone_clicks_watcher()
+                threading.Thread(target=self._update_counts).start()
+                threading.Thread(target=self.milestone_clicks_watcher).start()
                 if seconds % 60 == 0:
-                    self._update_flair()
-                    self.save_json()
+                    threading.Thread(target=self._update_flair).start()
+                    threading.Thread(target=self.save_json).start()
                 if seconds == 120:
-                    self._reddit_subscriptions()
+                    threading.Thread(target=self._reddit_subscriptions).start()
                     seconds = 0
                 seconds += 5
                 sleep(5)
