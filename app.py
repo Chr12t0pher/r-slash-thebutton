@@ -32,6 +32,15 @@ class Socket(WebSocketClient):
                 datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
             #  Start milestone low watcher.
             threading.Thread(target=Data.milestone_low_watcher, args=(int(message["seconds_left"]), )).start()
+        if Data.zero_clicks == 2:
+            if int(message["seconds_left"]) == 60:
+                Data.zero_clicks = 0
+            else:
+                # The button is over.
+                threading.Thread(target=Data.button_over, args=(datetime.datetime.utcnow().strftime("%d %b ") +
+                                                                message["now_str"][-8:].replace("-", ":"), )).start()
+        if int(message["seconds_left"]) == 0:
+            Data.zero_clicks += 1
         Data.total_clicks["all"] = int(message["participants_text"].replace(",", ""))
 
 
@@ -49,6 +58,7 @@ class ButtonStats:
         subscriptions_email = data["subscriptions"]["email"]
         subscriptions_reddit = data["subscriptions"]["reddit"]
         subscriptions_reddit_last_msg = data["subscriptions"]["reddit_last_msg"]
+        zero_clicks = 0
 
     def save_json(self):
         data = {"lowest_click": self.lowest_click,
@@ -254,6 +264,35 @@ class ButtonStats:
                 milestone, post.url.replace("www", "np")))
             sleep(2)
 
+    def button_over(self, time):
+        """Post reddit thread and update users via email/reddit pm of the button ending."""
+        post = bot.submit("thebutton",
+                          "After {} clicks, the experiment has ended at {} UTC.".format(
+                              self.total_clicks["all"], time),
+                          text=app_templates.reddit_post.format(
+                              self.lowest_click["time"],
+
+                              self.clicks_per_second["all"], self.total_clicks["all"],
+                              self.clicks_per_second["1m"], self.total_clicks["1m"],
+                              self.clicks_per_second["10m"], self.total_clicks["10m"],
+                              self.clicks_per_second["60m"], self.total_clicks["60m"],
+
+                              self.subreddit_flair["colour"]["purple"], self.subreddit_flair["colour_percentage"]["purple"],
+                              self.subreddit_flair["colour"]["blue"], self.subreddit_flair["colour_percentage"]["blue"],
+                              self.subreddit_flair["colour"]["green"], self.subreddit_flair["colour_percentage"]["green"],
+                              self.subreddit_flair["colour"]["yellow"], self.subreddit_flair["colour_percentage"]["yellow"],
+                              self.subreddit_flair["colour"]["orange"], self.subreddit_flair["colour_percentage"]["orange"],
+                              self.subreddit_flair["colour"]["red"], self.subreddit_flair["colour_percentage"]["red"],
+
+                              self.lowest_click["click"], self.lowest_click["time"]))
+
+        grid.send(sendgrid.Mail(bcc=self.subscriptions_email, subject="[/r/thebutton stats] The experiment has ended!",
+                                from_email="button@cstevens.me",
+                                text=app_templates.email_end.format(post.url)))
+        for user in self.subscriptions_reddit:
+            bot.send_message(user, "[/r/thebutton stats] The experiment has ended!", app_templates.reddit_end.format(
+                post.url))
+            sleep(2)
 
 Data = ButtonStats()
 

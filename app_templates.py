@@ -41,6 +41,15 @@ The button has passed {} clicks! Click [here]({}) to view the stats.
 To unsubscribe, click [here](http://www.reddit.com/message/compose?to=thebuttonstatsbot&subject=Unsubscribing&message=!unsubscribe).
 """
 
+reddit_end = """
+The experiement is over! Click [here]({}) to view the stats.
+
+Thank you for using [/r/thebutton stats](http://button.cstevens.me).
+
+^_If_ ^_you_ ^_enjoyed_ ^_this_ ^_service_ ^_please_ ^_consider_ [^_donating_](http://button.cstevens.me/donate)^_._
+
+"""
+
 email_low = """
 The button has gone down to {} seconds! See the stats at {}.
 
@@ -51,4 +60,14 @@ email_clicks = """
 The button has passed {} clicks! See the stats at {}.
 
 To unsubscribe, goto http://button.cstevens.me/notify and enter your email address.
+"""
+
+email_end = """
+The experiement is over! Click [here]({}) to view the stats.
+
+Thank you for using [/r/thebutton stats](http://button.cstevens.me).
+Your email will now be removed from the database.
+
+If you enjoyed this service please consider [donating](http://button.cstevens.me/donate).
+
 """
