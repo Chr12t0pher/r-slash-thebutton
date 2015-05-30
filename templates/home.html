@@ -4,8 +4,6 @@
 {% block title %}Home{% endblock %}
 
 {% block main %}
-    <div class="alert alert-warning"><b>Final Release</b>: No more features will be added to the site. Thank you to all 70,000 of you who have visited the site 125,000 times and visited over 300,000 pages!</div>
-
     <div class="row">
         <div class="col-lg-6">
             <h4>Clicks Per Second (Overall)</h4>
@@ -51,17 +49,9 @@
             </ul>
             <small>Via /u/OutOfBrain.<br>All clicks since 04 Apr are included.</small>
         </div>
-    </div>
-
-    <hr/>
-
-    <div class="row">
         <div class="col-lg-6">
             <h4>Lowest Time (Overall)</h4>
             <p><strong>{{ data["lowest_click"]["click"] }}</strong> seconds on <strong>{{ data["lowest_click"]["time"] }}</strong> UTC</p>
-        </div>
-
-        <div class="col-lg-6">
             <h4>Longest Possible Time</h4>
             <p>If each click was at 1 second, the timer would still be going at <b>{{ data["max_date"] }}</b>.</p>
         </div>
