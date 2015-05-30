@@ -24,7 +24,6 @@ grid = sendgrid.SendGridClient("Chr12t0pher", secret["sendgrid"])
 class Socket(WebSocketClient):
     def received_message(self, message):
         raw = literal_eval(str(message))
-        print(raw)
         if raw["type"] == "ticking":
             message = raw["payload"]
             if message["seconds_left"] < Data.lowest_click["click"]:  # Check for new low.
