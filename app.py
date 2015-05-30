@@ -23,25 +23,24 @@ grid = sendgrid.SendGridClient("Chr12t0pher", secret["sendgrid"])
 
 class Socket(WebSocketClient):
     def received_message(self, message):
-        message = literal_eval(str(message))["payload"]
-        if message["seconds_left"] < Data.lowest_click["click"]:  # Check for new low.
-            Data.lowest_click_times[str(int(message["seconds_left"]))] = \
-                datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
-            Data.lowest_click["click"] = int(message["seconds_left"])
-            Data.lowest_click["time"] = \
-                datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
-            #  Start milestone low watcher.
-            threading.Thread(target=Data.milestone_low_watcher, args=(int(message["seconds_left"]), )).start()
-        if Data.zero_clicks == 2:
-            if int(message["seconds_left"]) == 60:
-                Data.zero_clicks = 0
-            else:
-                # The button is over.
-                threading.Thread(target=Data.button_over, args=(datetime.datetime.utcnow().strftime("%d %b ") +
-                                                                message["now_str"][-8:].replace("-", ":"), )).start()
-        if int(message["seconds_left"]) == 0:
-            Data.zero_clicks += 1
-        Data.total_clicks["all"] = int(message["participants_text"].replace(",", ""))
+        raw = literal_eval(str(message))
+        print(raw)
+        if raw["type"] == "ticking":
+            message = raw["payload"]
+            if message["seconds_left"] < Data.lowest_click["click"]:  # Check for new low.
+                Data.lowest_click_times[str(int(message["seconds_left"]))] = \
+                    datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
+                Data.lowest_click["click"] = int(message["seconds_left"])
+                Data.lowest_click["time"] = \
+                    datetime.datetime.utcnow().strftime("%d %b ") + message["now_str"][-8:].replace("-", ":")
+                #  Start milestone low watcher.
+                threading.Thread(target=Data.milestone_low_watcher, args=(int(message["seconds_left"]), )).start()
+            Data.total_clicks["all"] = int(message["participants_text"].replace(",", ""))
+        elif raw["type"] == "just_expired" and Data.is_expired is False:
+            Data.is_expired = True
+            Data.expired_time = datetime.datetime.utcnow().strftime("%d %b %H:%M:%S")
+            threading.Thread(target=Data.button_over, args=(raw, )).start()
+
 
 
 class ButtonStats:
@@ -58,7 +57,8 @@ class ButtonStats:
         subscriptions_email = data["subscriptions"]["email"]
         subscriptions_reddit = data["subscriptions"]["reddit"]
         subscriptions_reddit_last_msg = data["subscriptions"]["reddit_last_msg"]
-        zero_clicks = 0
+        is_expired = data["expired"]["boolean"]
+        expired_time = data["expired"]["time"]
 
     def save_json(self):
         data = {"lowest_click": self.lowest_click,
@@ -71,7 +71,9 @@ class ButtonStats:
                 "milestones": self.milestones,
                 "subscriptions": {"email": self.subscriptions_email,
                                   "reddit": self.subscriptions_reddit,
-                                  "reddit_last_msg": self.subscriptions_reddit_last_msg}
+                                  "reddit_last_msg": self.subscriptions_reddit_last_msg},
+                "expired": {"boolean": self.is_expired,
+                            "time": self.expired_time}
                 }
         with open("data.json", "w") as f:
             f.write(dumps(data))
@@ -264,18 +266,15 @@ class ButtonStats:
                 milestone, post.url.replace("www", "np")))
             sleep(2)
 
-    def button_over(self, time):
+    def button_over(self, raw):
         """Post reddit thread and update users via email/reddit pm of the button ending."""
         post = bot.submit("thebutton",
                           "After {} clicks, the experiment has ended at {} UTC.".format(
-                              self.total_clicks["all"], time),
+                              self.total_clicks["all"], self.expired_time),
                           text=app_templates.reddit_post.format(
-                              self.lowest_click["time"],
+                              self.expired_time,
 
                               self.clicks_per_second["all"], self.total_clicks["all"],
-                              self.clicks_per_second["1m"], self.total_clicks["1m"],
-                              self.clicks_per_second["10m"], self.total_clicks["10m"],
-                              self.clicks_per_second["60m"], self.total_clicks["60m"],
 
                               self.subreddit_flair["colour"]["purple"], self.subreddit_flair["colour_percentage"]["purple"],
                               self.subreddit_flair["colour"]["blue"], self.subreddit_flair["colour_percentage"]["blue"],
@@ -284,7 +283,69 @@ class ButtonStats:
                               self.subreddit_flair["colour"]["orange"], self.subreddit_flair["colour_percentage"]["orange"],
                               self.subreddit_flair["colour"]["red"], self.subreddit_flair["colour_percentage"]["red"],
 
-                              self.lowest_click["click"], self.lowest_click["time"]))
+                              self.subreddit_flair["time"]["60"],
+                              self.subreddit_flair["time"]["59"],
+                              self.subreddit_flair["time"]["58"],
+                              self.subreddit_flair["time"]["57"],
+                              self.subreddit_flair["time"]["56"],
+                              self.subreddit_flair["time"]["55"],
+                              self.subreddit_flair["time"]["54"],
+                              self.subreddit_flair["time"]["53"],
+                              self.subreddit_flair["time"]["52"],
+                              self.subreddit_flair["time"]["51"],
+                              self.subreddit_flair["time"]["50"],
+                              self.subreddit_flair["time"]["49"],
+                              self.subreddit_flair["time"]["48"],
+                              self.subreddit_flair["time"]["47"],
+                              self.subreddit_flair["time"]["46"],
+                              self.subreddit_flair["time"]["45"],
+                              self.subreddit_flair["time"]["44"],
+                              self.subreddit_flair["time"]["43"],
+                              self.subreddit_flair["time"]["42"],
+                              self.subreddit_flair["time"]["41"],
+                              self.subreddit_flair["time"]["40"],
+                              self.subreddit_flair["time"]["39"],
+                              self.subreddit_flair["time"]["38"],
+                              self.subreddit_flair["time"]["37"],
+                              self.subreddit_flair["time"]["36"],
+                              self.subreddit_flair["time"]["35"],
+                              self.subreddit_flair["time"]["34"],
+                              self.subreddit_flair["time"]["33"],
+                              self.subreddit_flair["time"]["32"],
+                              self.subreddit_flair["time"]["31"],
+                              self.subreddit_flair["time"]["30"],
+                              self.subreddit_flair["time"]["29"],
+                              self.subreddit_flair["time"]["28"],
+                              self.subreddit_flair["time"]["27"],
+                              self.subreddit_flair["time"]["26"],
+                              self.subreddit_flair["time"]["25"],
+                              self.subreddit_flair["time"]["24"],
+                              self.subreddit_flair["time"]["23"],
+                              self.subreddit_flair["time"]["22"],
+                              self.subreddit_flair["time"]["21"],
+                              self.subreddit_flair["time"]["20"],
+                              self.subreddit_flair["time"]["19"],
+                              self.subreddit_flair["time"]["18"],
+                              self.subreddit_flair["time"]["17"],
+                              self.subreddit_flair["time"]["16"],
+                              self.subreddit_flair["time"]["15"],
+                              self.subreddit_flair["time"]["14"],
+                              self.subreddit_flair["time"]["13"],
+                              self.subreddit_flair["time"]["12"],
+                              self.subreddit_flair["time"]["11"],
+                              self.subreddit_flair["time"]["10"],
+                              self.subreddit_flair["time"]["9"],
+                              self.subreddit_flair["time"]["8"],
+                              self.subreddit_flair["time"]["7"],
+                              self.subreddit_flair["time"]["6"],
+                              self.subreddit_flair["time"]["5"],
+                              self.subreddit_flair["time"]["4"],
+                              self.subreddit_flair["time"]["3"],
+                              self.subreddit_flair["time"]["2"],
+                              self.subreddit_flair["time"]["1"],
+                              self.subreddit_flair["time"]["0"],
+
+                              raw))
 
         grid.send(sendgrid.Mail(bcc=self.subscriptions_email, subject="[/r/thebutton stats] The experiment has ended!",
                                 from_email="button@cstevens.me",
