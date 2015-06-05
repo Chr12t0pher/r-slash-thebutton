@@ -8,5 +8,5 @@ sys.path.insert(0, '/home/www/')
 from app import app as application
 from app import Data
 
-threading.Thread(target=Data.socket_controller).start()
-threading.Thread(target=Data.scheduler).start()
+#threading.Thread(target=Data.socket_controller).start()
+#threading.Thread(target=Data.scheduler).start()

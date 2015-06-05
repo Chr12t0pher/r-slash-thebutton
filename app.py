@@ -41,7 +41,6 @@ class Socket(WebSocketClient):
             threading.Thread(target=Data.button_over, args=(raw, )).start()
 
 
-
 class ButtonStats:
     with open("data.json", "r") as f:
         data = loads(f.read())
