@@ -4,34 +4,17 @@
 {% block title %}Home{% endblock %}
 
 {% block main %}
+    <div class="alert alert-info"><b>The Button has ended!</b> See the announcement <i><a href="http://www.reddit.com/r/thebutton/comments/38q43k/after_1008316_clicks_the_experiment_has_ended_at/">here</a></i>.</div>
+
     <div class="row">
         <div class="col-lg-6">
             <h4>Clicks Per Second (Overall)</h4>
             <p><strong>{{ data["clicks_per_second"]["all"] }}</strong> clicks /sec</p>
-
-            <h4>Clicks Per Second (Past 1m)</h4>
-            <p><strong>{{ data["clicks_per_second"]["1m"] }}</strong> clicks  /sec</p>
-
-            <h4>Clicks Per Second (Past 10m)</h4>
-            <p><strong>{{ data["clicks_per_second"]["10m"] }}</strong> clicks /sec</p>
-
-            <h4>Clicks Per Second (Past 60m)</h4>
-            <p><strong>{{ data["clicks_per_second"]["60m"] }}</strong> clicks /sec</p>
         </div>
 
         <div class="col-lg-6">
             <h4>Number of Clicks (Overall)</h4>
             <p><strong>{{ data["total_clicks"]["all"] }}</strong> clicks</p>
-
-            <h4>Number of Clicks (Past 1m)</h4>
-            <p><strong>{{ data["total_clicks"]["1m"] }}</strong> clicks</p>
-
-            <h4>Number of Clicks (Past 10m)</h4>
-            <p><strong>{{ data["total_clicks"]["10m"] }}</strong> clicks</p>
-
-            <h4>Number of Clicks (Past 60m)</h4>
-            <p><strong>{{ data["total_clicks"]["60m"] }}</strong> clicks</p>
-        </div>
     </div>
 
     <hr/>
@@ -47,11 +30,11 @@
                 <li><span style="color: #E59500">Orange</span>: {{ data["subreddit_flair"]["colour"]["orange"] }} ({{ data["subreddit_flair"]["colour_percentage"]["orange"] }}%)</li>
                 <li><span style="color: #E50000">Red</span>: {{ data["subreddit_flair"]["colour"]["red"] }} ({{ data["subreddit_flair"]["colour_percentage"]["red"] }}%)</li>
             </ul>
-            <small>Via /u/OutOfBrain.<br>All clicks since 04 Apr are included.</small>
+            <small>Raw click data via /u/OutOfBrain.<br>All clicks since 04 Apr are included.</small>
         </div>
         <div class="col-lg-6">
-            <h4>Lowest Time (Overall)</h4>
-            <p><strong>{{ data["lowest_click"]["click"] }}</strong> seconds on <strong>{{ data["lowest_click"]["time"] }}</strong> UTC</p>
+            <h4>Ended At</h4>
+            <p>The experiment ended at <strong>05 Jun 21:50:55</strong> UTC</p>
             <h4>Longest Possible Time</h4>
             <p>If each click was at 1 second, the timer would still be going at <b>{{ data["max_date"] }}</b>.</p>
         </div>
