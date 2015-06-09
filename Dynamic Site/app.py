@@ -50,11 +50,6 @@ class ButtonStats:
         total_clicks = data["total_clicks"]
         subreddit_flair = data["subreddit_flair"]
         max_date = data["max_date"]
-        historic = data["historic"]
-        milestones = data["milestones"]
-        subscriptions_email = data["subscriptions"]["email"]
-        subscriptions_reddit = data["subscriptions"]["reddit"]
-        subscriptions_reddit_last_msg = data["subscriptions"]["reddit_last_msg"]
         is_expired = data["expired"]["boolean"]
         expired_time = data["expired"]["time"]
 
@@ -65,11 +60,6 @@ class ButtonStats:
                 "total_clicks": self.total_clicks,
                 "subreddit_flair": self.subreddit_flair,
                 "max_date": self.max_date,
-                "historic": self.historic,
-                "milestones": self.milestones,
-                "subscriptions": {"email": self.subscriptions_email,
-                                  "reddit": self.subscriptions_reddit,
-                                  "reddit_last_msg": self.subscriptions_reddit_last_msg},
                 "expired": {"boolean": self.is_expired,
                             "time": self.expired_time}
                 }
