@@ -4,8 +4,6 @@
 {% block title %}Graphs{% endblock %}
 
 {% block main %}
-    <div class="alert alert-warning"><b>Warning</b>: The graphs page is in beta. Suggest charts and give feedback by messaging /u/Chr12t0pher.</div>
-
     <div class="row">
         <div class="well">
             <div id="low-scatter"></div>
@@ -17,10 +15,10 @@
             <div id="time-dist-bar"></div>
         </div>
     </div>
-
+<!--
     <div class="row">
         <div class="well">
-            <img src="https://abra.me/static/blips_1h.png" style="width:100%"/>
+            <img src="https://abra.me/static/blips_6h.png" style="width:100%"/>
             <small>Chart by /u/mncke. See more <a href="http://abra.me/static/graphs.html" target="_blank">here</a>.</small>
         </div>
     </div>
@@ -30,7 +28,8 @@
             <img src="https://abra.me/static/hist_all.png" style="width:100%"/>
             <small>Chart by /u/mncke. See more <a href="http://abra.me/static/graphs.html" target="_blank">here</a>.</small>
         </div>
-    </div>
+    </div> -->
+    <div class="alert alert-info"><b>Got a cool graph?</b> Message /u/Chr12t0pher on reddit with a link, and I'll add it to the page!</div>
 {% endblock %}
 {% block js %}
     <script> // Random coloured button.
@@ -50,12 +49,16 @@
         data.addColumn('number', 'Second Reached');
         data.addColumn({type: 'string', role: 'style'});
         data.addRows([
-            [new Date(2015, 3, 3, 2, 53, 30),   55, '#820080'],
-            [new Date(2015, 3, 3, 2, 53, 31),   54, '#820080'],
-            [new Date(2015, 3, 3, 3, 19, 13),   53, '#820080'],
-            [new Date(2015, 3, 3, 3, 19, 14),   52, '#820080'],
-            [new Date(2015, 3, 3, 5, 50, 54),   51, '#0083C7'],
-            [new Date(2015, 3, 3, 6, 26, 13),   50, '#0083C7'],
+            [new Date(2015, 3, 1, 16, 10, 47),   59, '#820080'],
+            [new Date(2015, 3, 1, 16, 20, 56),   58, '#820080'],
+            [new Date(2015, 3, 1, 16, 41, 38),   57, '#820080'],
+            [new Date(2015, 3, 1, 18, 30, 17),   56, '#820080'],
+            [new Date(2015, 3, 2, 8, 28, 21),   55, '#820080'],
+            [new Date(2015, 3, 2, 8, 28, 53),   54, '#820080'],
+            [new Date(2015, 3, 2, 8, 30, 55),   53, '#820080'],
+            [new Date(2015, 3, 2, 8, 32, 35),   52, '#820080'],
+            [new Date(2015, 3, 2, 8, 33, 38),   51, '#0083C7'],
+            [new Date(2015, 3, 2, 8, 32, 58),   50, '#0083C7'],
             [new Date(2015, 3, 3, 7, 47, 3),    49, '#0083C7'],
             [new Date(2015, 3, 3, 8, 33, 33),   48, '#0083C7'],
             [new Date(2015, 3, 3, 23, 9, 14),   47, '#0083C7'],
@@ -94,8 +97,20 @@
             [new Date(2015, 3, 22, 9, 28, 23),  14, '#E59500'],
             [new Date(2015, 3, 24, 7, 23, 9),   13, '#E59500'],
             [new Date(2015, 3, 24, 10, 25, 4),  12, '#E59500'],
-            [new Date(2015, 3, 24, 11, 18, 14), 11, '#E50000']
-          //[new Date(2015, 3, DD, H, MM, SS),  TT, '#Colour'],
+            [new Date(2015, 3, 24, 11, 18, 14), 11, '#E50000'],
+            [new Date(2015, 3, 30, 10, 9, 20),  10, '#E50000'],
+	        [new Date(2015, 4, 4, 10, 32, 29), 9, '#E50000'],
+	        [new Date(2015, 4, 5, 9, 12, 19), 8, '#E50000'],
+	        [new Date(2015, 4, 8, 6, 11, 45), 7, '#E50000'],
+            [new Date(2015, 4, 11, 9, 24, 2), 6, '#E50000'],
+            [new Date(2015, 4, 12, 2, 40, 17), 5, '#E50000'],
+            [new Date(2015, 4, 12, 2, 40, 18), 4, '#E50000'],
+            [new Date(2015, 4, 12, 2, 40, 19), 3, '#E50000'],
+            [new Date(2015, 4, 12, 2, 40, 20), 2, '#E50000'],
+            [new Date(2015, 4, 18, 14, 37, 4), 1, '#E50000'],
+            [new Date(2015, 4, 18, 14, 37, 5), 0, '#E50000'],
+            [new Date(2015, 5, 5, 21, 50, 55), 0, '#000000']
+          //[new Date(2015, 3, DD, H, MM, SS),  TT, '#Colour']
         ]);
         var options = {
             title: 'Lowest Time Visualisation',
@@ -118,16 +133,17 @@
             data.addColumn('number', 'Low Scores');
 
             data.addRows([
-                [{v: [2, 0, 0], f: '2 am'},   4],
+                [{v: [2, 0, 0], f: '2 am'},   8],
                 [{v: [3, 0, 0], f: '3 am'},   2],
                 [{v: [5, 0, 0], f:'5 am'},    2],
-                [{v: [6, 0, 0], f: '6 am'},   2],
+                [{v: [6, 0, 0], f: '6 am'},   3],
                 [{v: [7, 0, 0], f: '7 am'},   5],
                 [{v: [8, 0, 0], f: '8 am'},   8],
-                [{v: [9, 0, 0], f: '9 am'},   11],
-                [{v: [10, 0, 0], f: '10 am'}, 2],
+                [{v: [9, 0, 0], f: '9 am'},   13],
+                [{v: [10, 0, 0], f: '10 am'}, 4],
                 [{v: [11, 0, 0], f: '11 am'}, 3],
                 [{v: [13, 0, 0], f: '1 pm'},  1],
+                [{v: [14, 0, 0], f: '2 pm'},  2],
                 [{v: [21, 0, 0], f: '9 pm'},  2],
                 [{v: [23, 0, 0], f: '11 pm'}, 1]
                 //[{v: [hh, 0, 0], f:'hh xm'},  x],

@@ -1,0 +1,56 @@
+{% extends "template.html" %}
+{% set active = "home" %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+    <div class="alert alert-info"><b>The Button has ended!</b> See the announcement <i><a href="http://www.reddit.com/r/thebutton/comments/38q43k/after_1008316_clicks_the_experiment_has_ended_at/">here</a></i>.</div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h4>Clicks Per Second (Overall)</h4>
+            <p><strong>{{ data["historic"]["clicks_per_second"] }}</strong> clicks /sec</p>
+        </div>
+
+        <div class="col-lg-6">
+            <h4>Number of Clicks (Overall)</h4>
+            <p><strong>{{ data["historic"]["total_clicks"] }}</strong> clicks</p>
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <h4>Flair Breakdown</h4>
+            <ul>
+                <li><span style="color: #820080">Purple</span>: {{ data["clicks"]["colour"]["purple"] }} ({{ data["clicks"]["colour_pc"]["purple"] }}%)</li>
+                <li><span style="color: #0083C7">Blue</span>: {{ data["clicks"]["colour"]["blue"] }} ({{ data["clicks"]["colour_pc"]["blue"] }}%)</li>
+                <li><span style="color: #02BE01">Green</span>: {{ data["clicks"]["colour"]["green"] }} ({{ data["clicks"]["colour_pc"]["green"] }}%)</li>
+                <li><span style="color: #E5D900">Yellow</span>: {{ data["clicks"]["colour"]["yellow"] }} ({{ data["clicks"]["colour_pc"]["yellow"] }}%)</li>
+                <li><span style="color: #E59500">Orange</span>: {{ data["clicks"]["colour"]["orange"] }} ({{ data["clicks"]["colour_pc"]["orange"] }}%)</li>
+                <li><span style="color: #E50000">Red</span>: {{ data["clicks"]["colour"]["red"] }} ({{ data["clicks"]["colour_pc"]["red"] }}%)</li>
+            </ul>
+            <small>Data accurately generated from the <a href="https://github.com/reddit/thebutton-data/">official dataset</a>.</small>
+        </div>
+        <div class="col-lg-6">
+            <h4>Ended At</h4>
+            <p>The experiment ended at <strong>05 Jun 21:50:55</strong> UTC</p>
+            <h4>Longest Possible Time</h4>
+            <p>If each click was at 1 second, the timer would still be going at <b>{{ data["historic"]["max_date"] }}</b>.</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script> // Popover enabled.
+    $(function () {
+        $("[data-toggle='popover']").popover()
+    })
+    </script>
+    <script> // Random coloured button.
+    $(document).ready( function() {
+        var colours = ["purple", "blue", "green", "yellow", "orange", "red"];
+        $("#mainbutton").addClass("btn-material-" + colours[Math.floor(Math.random() * colours.length)]);
+    })
+    </script>
+{% endblock %}
