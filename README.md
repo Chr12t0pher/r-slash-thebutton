@@ -5,3 +5,4 @@ Featured in [The Guardian](http://www.theguardian.com/technology/2015/apr/13/wha
 
 ---
 
+### View the [wiki](https://github.com/Chr12t0pher/r-slash-thebutton/wiki) for more information.
